@@ -42,7 +42,7 @@
          </p>
         <p class="control">
           <button class="button  is-success" onclick="ChangeWS()">
-            工程-WORK</button>
+            半製品－完成品</button>
          </p>
         <p class="control">
           <button class="button is-warning" onclick="ChangeCode()">
@@ -52,26 +52,16 @@
       </div>
 
     <input class ="input is-normal input-name is fullwidth" placeholder="Nameー名前" id ="Name">
-    <input class ="input is-normal input-ws is fullwidth" placeholder="Work stationー工程ー機械ー場所" id ="WS" >
+    <input class ="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id ="WS" >
     
     <input class ="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
     <input class="input is-normal is-warning input-Number "   placeholder="Number-数量" id="Number-code">
 
        
       
-  <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">不良/不足数</label>
-      </div>
-    <div class="field-body">
-      <div class="field">
-        <p class="control">
-          <input class="input is-small input-NG " placeholder="不良数/不足数-Số hàng hỏng hoặc thiếu"  id="NG-code">
-        </p>
-      </div>
-    </div>
-  </div>
-       <button class="button is-danger is-fullwidth " onclick="sendData()">Save-保存</button>
+  
+  
+    <button class="button is-danger is-fullwidth " onclick="sendData()">Save-保存</button>
        <div style=" width: 800px; margin: 0 auto;" id="reader"></div>
 
        
@@ -79,9 +69,10 @@
       <section class ="hero is-small  is-primary">
         <div class ="hero-body">
           <p class = "title">
-            大島工作所-電子日報
+            大島工作所-棚卸
           </p>
-    </div> 
+        </div> 
+ 
       </section>      
 
 
@@ -100,7 +91,7 @@
       }
       function IsEmpty() {
         if (document.querySelector('.input-ws').value === "") {
-          alert("工程を入力してください-Hãy nhập nội dung công việc của bạn");
+          alert("半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm");
         return false;
       }
   return true;
@@ -111,24 +102,24 @@
           alert("QRコードを入力してください-Hãy nhập mã hàng");
         return false;
       }
-        const API_URL = "https://script.google.com/macros/s/AKfycbxXZT25iaT352mj4qp1my24YvmrgIAO2mzMKHyDCzJDEvabwqEAUvVPln76jI_UfTyepg/exec"
+        const API_URL = "https://script.google.com/macros/s/AKfycbyYYISzqxtaMKcT1ChCl2hiYBfmuMgjJpVkCPx4iMnxO7v88VYWGfm31Ndk0anyiTF-1A/exec"
         const options = {
           method: 'POST',
           contentType: 'application/json',
-          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value,Number: document.querySelector('.input-Number').value,NG: document.querySelector('.input-NG').value, class:document.querySelector('.input-code').value+"$"})
+          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value,Number: document.querySelector('.input-Number').value, class:document.querySelector('.input-code').value+"$"})
         }
         const response = fetch(API_URL, options)
         .then(response => response.json())
         .then(data=> console.log(data))
           document.querySelector('.input-code').value=''
           document.querySelector('.input-Number').value=''
-          document.querySelector('.input-NG').value=''
+          
           document.getElementById("code").focus();
         
         play();
       }
 
-       const API_URL = "https://script.google.com/macros/s/AKfycbxXZT25iaT352mj4qp1my24YvmrgIAO2mzMKHyDCzJDEvabwqEAUvVPln76jI_UfTyepg/exec"
+       const API_URL = "https://script.google.com/macros/s/AKfycbyYYISzqxtaMKcT1ChCl2hiYBfmuMgjJpVkCPx4iMnxO7v88VYWGfm31Ndk0anyiTF-1A/exec"
        let html5QrCode;
        const config={fps:5,qrbox: 450}
       function qrCodeSuccessCallback(message) {
@@ -146,14 +137,14 @@
         const options = {
           method: 'POST',
           contentType: 'application/json',
-          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value,Number: document.querySelector('.input-Number').value,NG: document.querySelector('.input-NG').value, class:qrCodeMessage+"$"})
+          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value,Number: document.querySelector('.input-Number').value, class:qrCodeMessage+"$"})
         }
         const response = fetch(API_URL, options)
         .then(response => response.json())
         .then(data=> startScan())
           document.querySelector('.input-code').value=''
           document.querySelector('.input-Number').value=''
-          document.querySelector('.input-NG').value='';
+         
       }
 
       function startScan(){
