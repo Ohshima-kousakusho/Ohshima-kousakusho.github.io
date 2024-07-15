@@ -1,1 +1,170 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <style>
+      input:focus{background:pink; color:blue;}
+      button:focus{background:pink; color:blue;}
+      .button {
+  display: inline-block;
+  padding: 15px 30px;
+  font-size: 30px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: purple;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
 
+.button:hover {background-color: #58257b}
+
+.button:active {
+  background-color: #58257b;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
+    
+  </head>
+  <body>
+    
+    
+    <div class="field is-grouped">
+        <p class="control">
+          <button class="button is-info" onclick="ChangeName()">
+            チケット </button>
+         </p>
+        <p class="control">
+          <button class="button  is-success" onclick="ChangeWS()">
+            図面</button>
+         </p>
+        
+          
+      </div>
+
+    <input class ="input is-normal input-name is fullwidth" placeholder="チケット" id ="Name">
+    <input class ="input is-normal input-ws is fullwidth" placeholder="図面" id ="WS" >
+          
+     
+       <button class="button is-danger is-fullwidth " onclick="sendData()">Compare-比較</button>
+       <div style=" width: 800px; margin: 0 auto;" id="reader"></div>
+
+       
+  <div class = "container is-fluid">
+      <section class ="hero is-small  is-primary">
+        <div class ="hero-body">
+          <p class = "title">
+            大島工作所
+          </p>
+    </div> 
+      </section>      
+
+
+    <script>
+      function ChangeName(){
+        document.querySelector('.input-name').value=''
+        document.getElementById("Name").focus();
+      }
+      function ChangeWS(){
+        document.querySelector('.input-ws').value=''
+        document.getElementById("WS").focus();
+      }
+
+      //Kiểm xem có trá trị rỗng hay không
+      function IsEmpty() {
+        if (document.querySelector('.input-ws').value === "") {
+          alert("khong the so sanh gia tri rong");
+        return false;
+      }
+  return true;
+}
+
+     window.onload = function() {
+        document.getElementById("Name").focus();
+      }
+
+        document.querySelector('.input-name').addEventListener('change', function() {
+            // Thực hiện lệnh ngay lập tức khi giá trị thay đổi
+            console.log('Input value changed to:', this.value);
+            // thực hiện con nháy xuống phần nhập mã zumen
+            document.getElementById("WS").focus();
+        });   
+
+       document.querySelector('.input-ws').addEventListener('change', function() {
+            // Thực hiện lệnh ngay lập tức khi giá trị thay đổi
+            console.log('Input value changed to:', this.value);
+            // thực hiện lệnh so sánh
+            sendData();
+        });   
+        
+          
+      
+      function sendData(){
+        IsEmpty();
+        if (document.querySelector('.input-ws').value != document.querySelector('.input-name').value ) {
+          play()
+        
+        return false;
+
+      }
+        const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec"
+        const options = {
+          method: 'POST',
+          contentType: 'application/json',
+          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value})
+        }
+        const response = fetch(API_URL, options)
+        .then(response => response.json())
+        .then(data=> console.log(data))
+          document.querySelector('.input-name').value=''
+          document.querySelector('.input-ws').value=''
+          document.getElementById("Name").focus();        
+      }
+
+        
+
+   const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec"
+   let html5QrCode;
+   const config={fps:5,qrbox: 450}
+   function qrCodeSuccessCallback(message) {
+        onScanSuccess(message)
+      }
+      function play() { 
+            var audio = new Audio( 
+'https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
+
+            audio.play(); 
+            }
+           
+      function onScanSuccess(qrCodeMessage) {
+       html5QrCode.stop()
+        const options = {
+          method: 'POST',
+          contentType: 'application/json',
+          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value})
+        }
+        const response = fetch(API_URL, options)
+        .then(response => response.json())
+        .then(data=> startScan())
+          document.querySelector('.input-name').value=''
+          document.querySelector('.input-ws').value=''
+          document.getElementById("Name").focus();
+      }
+
+      function startScan(){
+        document.getElementById('reader').innerHTML =''
+        html5QrCode = new Html5Qrcode('reader')
+        html5QrCode.start ({ facingMode: "environment"},config,qrCodeSuccessCallback)
+        play();
+      }
+
+        startScan(); 
+    </script>
+  </body>
+</html>
