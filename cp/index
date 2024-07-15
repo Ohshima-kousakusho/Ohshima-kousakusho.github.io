@@ -79,7 +79,7 @@
       //Kiểm xem có trá trị rỗng hay không
       function IsEmpty() {
         if (document.querySelector('.input-ws').value === "") {
-          alert("khong the so sanh gia tri rong");
+          alert("không thể so sánh giá trị rỗng");
         return false;
       }
   return true;
