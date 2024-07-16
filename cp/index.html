@@ -80,6 +80,7 @@
       function IsEmpty() {
         if (document.querySelector('.input-ws').value === "") {
           alert("không thể so sánh giá trị rỗng");
+          document.getElementById("Name").focus();  
         return false;
       }
   return true;
