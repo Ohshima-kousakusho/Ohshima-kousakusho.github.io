@@ -126,45 +126,45 @@
           document.querySelector('.input-ws').value=''
           document.getElementById("Name").focus();        
       }
-
-        
-
-   const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec"
-   let html5QrCode;
-   const config={fps:5,qrbox: 450}
-   function qrCodeSuccessCallback(message) {
-        onScanSuccess(message)
-      }
-      function play() { 
+ function play() { 
             var audio = new Audio( 
 'https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
 
             audio.play(); 
-            }
+        
+
+    // const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec"
+    //let html5QrCode;
+    //const config={fps:5,qrbox: 450}
+    //function qrCodeSuccessCallback(message) {
+      //   onScanSuccess(message)
+      // }
+     
+       //      }
            
-      function onScanSuccess(qrCodeMessage) {
-       html5QrCode.stop()
-        const options = {
-          method: 'POST',
-          contentType: 'application/json',
-          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value})
-        }
-        const response = fetch(API_URL, options)
-        .then(response => response.json())
-        .then(data=> startScan())
-          document.querySelector('.input-name').value=''
-          document.querySelector('.input-ws').value=''
-          document.getElementById("Name").focus();
-      }
+     // function onScanSuccess(qrCodeMessage) {
+      // html5QrCode.stop()
+      //  const options = {
+      //    method: 'POST',
+      //    contentType: 'application/json',
+      //    body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value})
+     //   }
+      //  const response = fetch(API_URL, options)
+      ////  .then(response => response.json())
+      //  .then(data=> startScan())
+      //   document.querySelector('.input-name').value=''
+       //   document.querySelector('.input-ws').value=''
+      //    document.getElementById("Name").focus();
+   //   }
 
-      function startScan(){
-        document.getElementById('reader').innerHTML =''
-        html5QrCode = new Html5Qrcode('reader')
-        html5QrCode.start ({ facingMode: "environment"},config,qrCodeSuccessCallback)
-        play();
-      }
+    //  function startScan(){
+     //   document.getElementById('reader').innerHTML =''
+    //    html5QrCode = new Html5Qrcode('reader')
+     //   html5QrCode.start ({ facingMode: "environment"},config,qrCodeSuccessCallback)
+     //   play();
+    //  }
 
-        startScan(); 
+     //  startScan(); 
     </script>
   </body>
 </html>
