@@ -80,7 +80,7 @@
       function IsEmpty() {
         if (document.querySelector('.input-ws').value === "") {
           alert("không thể so sánh giá trị rỗng");
-          document.getElementById("WS").focus();  
+          document.getElementById("Name").focus();  
         return false;
       }
   return true;
@@ -108,7 +108,8 @@
       
       function sendData(){
         IsEmpty();
-        if (document.querySelector('.input-ws').value != document.querySelector('.input-name').value ) {
+
+        if (document.querySelector('.input-name').value.replace(/[^a-zA-Z0-9]/g, '') != document.querySelector('.input-ws').value.replace(/[^a-zA-Z0-9]/g, '') ) {
           play()
         
         return false;
@@ -132,8 +133,8 @@
 'https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
 
             audio.play(); 
-         }
-
+        
+}
     // const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec"
     //let html5QrCode;
     //const config={fps:5,qrbox: 450}
