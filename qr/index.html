@@ -4,8 +4,8 @@
     <base target="_top">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <style>
-      input:focus{background:pink; color:blue;}
-      button:focus{background:pink; color:blue;}
+      input:focus { background: pink; color: blue; }
+      button:focus { background: pink; color: blue; }
       .button {
         display: inline-block;
         padding: 15px 30px;
@@ -21,7 +21,7 @@
         box-shadow: 0 9px #999;
       }
 
-      .button:hover {background-color: #58257b}
+      .button:hover { background-color: #58257b }
 
       .button:active {
         background-color: #58257b;
@@ -35,6 +35,15 @@
         border: 1px solid #ddd;
         padding: 10px;
         margin-top: 10px;
+      }
+
+      /* CSS to control column widths */
+      .column-workstation {
+        width: 15%; /* Make Workstation column smaller */
+      }
+
+      .column-code {
+        width: 40%; /* Make Code column larger */
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
@@ -87,8 +96,8 @@
           <thead>
             <tr>
               <th>Name</th>
-              <th>Workstation</th>
-              <th>Code</th>
+              <th class="column-workstation">Workstation</th>
+              <th class="column-code">Code</th>
               <th>Number</th>
               <th>NG</th>
             </tr>
@@ -131,14 +140,12 @@
           return false;
         }
 
-        // Lấy giá trị nhập vào trước khi xóa
         const name = document.querySelector('.input-name').value;
         const ws = document.querySelector('.input-ws').value;
         const code = document.querySelector('.input-code').value;
         const number = document.querySelector('.input-Number').value;
         const ng = document.querySelector('.input-NG').value;
 
-        // Thêm dữ liệu vào danh sách trước khi gửi đi
         addDataToTable(name, ws, code, number, ng);
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxYuNTZTlnhaVZlgPEtQSoBs1AVRt_PjoJx0HQ1xANV2EjPOTcKRgGGmvSG71wkvvWx/exec";
@@ -152,7 +159,6 @@
           .then(response => response.json())
           .then(data => console.log(data));
 
-        // Xóa giá trị các trường input
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.querySelector('.input-NG').value = '';
@@ -161,7 +167,6 @@
         play();
       }
 
-      // Function to add data to the table
       function addDataToTable(name, ws, code, number, ng) {
         const tableBody = document.getElementById('data-table-body');
         const newRow = document.createElement('tr');
@@ -192,13 +197,11 @@
       function onScanSuccess(qrCodeMessage) {
         html5QrCode.stop();
 
-        // Lấy giá trị nhập vào trước khi xóa
         const name = document.querySelector('.input-name').value;
         const ws = document.querySelector('.input-ws').value;
         const number = document.querySelector('.input-Number').value;
         const ng = document.querySelector('.input-NG').value;
 
-        // Thêm dữ liệu vào danh sách trước khi gửi đi
         addDataToTable(name, ws, qrCodeMessage, number, ng);
 
         const options = {
