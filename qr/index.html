@@ -29,27 +29,12 @@
         transform: translateY(4px);
       }
 
-      .scrollable-table {
-        max-height: 200px; /* Chiều cao tối đa cho bảng */
+      .scrollable-list {
+        max-height: 200px; /* Chiều cao tối đa cho danh sách */
         overflow-y: auto; /* Tạo thanh cuộn dọc */
-        border: 1px solid #ddd; /* Viền cho bảng */
-        margin-top: 10px; /* Khoảng cách trên bảng */
-        width: 100%; /* Đặt chiều rộng đầy đủ cho bảng */
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-      }
-
-      th {
-        background-color: #f2f2f2;
+        border: 1px solid #ddd; /* Viền cho danh sách */
+        padding: 10px; /* Khoảng cách bên trong cho danh sách */
+        margin-top: 10px; /* Khoảng cách trên danh sách */
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
@@ -95,23 +80,10 @@
         </div>
       </section>
 
-      <!-- Thêm bảng để hiển thị dữ liệu đã nhập với thanh cuộn -->
+      <!-- Thêm danh sách để hiển thị dữ liệu đã nhập với thanh cuộn -->
       <h2 class="title">Danh sách dữ liệu đã nhập</h2>
-      <div class="scrollable-table">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Workstation</th>
-              <th>Code</th>
-              <th>Number</th>
-              <th>NG</th>
-            </tr>
-          </thead>
-          <tbody id="data-table">
-            <!-- Các hàng dữ liệu sẽ được thêm vào đây -->
-          </tbody>
-        </table>
+      <div class="scrollable-list">
+        <ul id="data-list" class="list"></ul>
       </div>
     </div>
 
@@ -154,8 +126,8 @@
         const number = document.querySelector('.input-Number').value;
         const ng = document.querySelector('.input-NG').value;
 
-        // Thêm dữ liệu vào bảng trước khi gửi đi
-        addDataToTable(name, ws, code, number, ng);
+        // Thêm dữ liệu vào danh sách trước khi gửi đi
+        addDataToList(name, ws, code, number, ng);
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxYuNTZTlnhaVZlgPEtQSoBs1AVRt_PjoJx0HQ1xANV2EjPOTcKRgGGmvSG71wkvvWx/exec";
         const options = {
@@ -177,24 +149,14 @@
         play();
       }
 
-      // Hàm để thêm dữ liệu vào bảng
-      function addDataToTable(name, ws, code, number, ng) {
-        const table = document.getElementById('data-table');
+      // Hàm để thêm dữ liệu vào danh sách
+      function addDataToList(name, ws, code, number, ng) {
+        // Tạo một mục danh sách mới
+        const listItem = document.createElement('li');
+        listItem.textContent = `Name: ${name}, Workstation: ${ws}, Code: ${code}, Number: ${number}, NG: ${ng}`;
 
-        // Tạo một hàng mới
-        const row = document.createElement('tr');
-
-        // Thêm dữ liệu vào từng ô trong hàng
-        row.innerHTML = `
-          <td>${name}</td>
-          <td>${ws}</td>
-          <td>${code}</td>
-          <td>${number}</td>
-          <td>${ng}</td>
-        `;
-
-        // Thêm hàng vào bảng
-        table.appendChild(row);
+        // Thêm mục vào danh sách
+        document.getElementById('data-list').appendChild(listItem);
       }
 
       function play() { 
@@ -218,8 +180,8 @@
         const number = document.querySelector('.input-Number').value;
         const ng = document.querySelector('.input-NG').value;
 
-        // Thêm dữ liệu vào bảng trước khi gửi đi
-        addDataToTable(name, ws, qrCodeMessage, number, ng);
+        // Thêm dữ liệu vào danh sách trước khi gửi đi
+        addDataToList(name, ws, qrCodeMessage, number, ng);
 
         const options = {
           method: 'POST',
@@ -233,4 +195,18 @@
 
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
-        document.querySelector('.input-NG').value
+        document.querySelector('.input-NG').value = '';
+      }
+
+      function startScan() {
+        if (!IsEmpty()) return;
+        document.getElementById('reader').innerHTML = '';
+        html5QrCode = new Html5Qrcode('reader');
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+        play();
+      }
+
+      startScan(); 
+    </script>
+  </body>
+</html>
