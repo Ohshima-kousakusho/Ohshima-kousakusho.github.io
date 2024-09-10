@@ -119,26 +119,28 @@
           return false;
         }
 
+        // Lấy giá trị nhập vào trước khi xóa
+        const name = document.querySelector('.input-name').value;
+        const ws = document.querySelector('.input-ws').value;
+        const code = document.querySelector('.input-code').value;
+        const number = document.querySelector('.input-Number').value;
+        const ng = document.querySelector('.input-NG').value;
+
+        // Thêm dữ liệu vào danh sách trước khi gửi đi
+        addDataToList(name, ws, code, number, ng);
+
         const API_URL = "https://script.google.com/macros/s/AKfycbxYuNTZTlnhaVZlgPEtQSoBs1AVRt_PjoJx0HQ1xANV2EjPOTcKRgGGmvSG71wkvvWx/exec";
         const options = {
           method: 'POST',
           contentType: 'application/json',
-          body: JSON.stringify({
-            name: document.querySelector('.input-name').value,
-            ws: document.querySelector('.input-ws').value,
-            Number: document.querySelector('.input-Number').value,
-            NG: document.querySelector('.input-NG').value,
-            class: document.querySelector('.input-code').value + "$"
-          })
+          body: JSON.stringify({ name, ws, Number: number, NG: ng, class: code + "$" })
         };
 
         fetch(API_URL, options)
           .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            addDataToList(); // Thêm dữ liệu vào danh sách
-          });
+          .then(data => console.log(data));
 
+        // Xóa giá trị các trường input
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.querySelector('.input-NG').value = '';
@@ -148,13 +150,7 @@
       }
 
       // Hàm để thêm dữ liệu vào danh sách
-      function addDataToList() {
-        const name = document.querySelector('.input-name').value;
-        const ws = document.querySelector('.input-ws').value;
-        const code = document.querySelector('.input-code').value;
-        const number = document.querySelector('.input-Number').value;
-        const ng = document.querySelector('.input-NG').value;
-
+      function addDataToList(name, ws, code, number, ng) {
         // Tạo một mục danh sách mới
         const listItem = document.createElement('li');
         listItem.textContent = `Name: ${name}, Workstation: ${ws}, Code: ${code}, Number: ${number}, NG: ${ng}`;
@@ -177,16 +173,20 @@
 
       function onScanSuccess(qrCodeMessage) {
         html5QrCode.stop();
+
+        // Lấy giá trị nhập vào trước khi xóa
+        const name = document.querySelector('.input-name').value;
+        const ws = document.querySelector('.input-ws').value;
+        const number = document.querySelector('.input-Number').value;
+        const ng = document.querySelector('.input-NG').value;
+
+        // Thêm dữ liệu vào danh sách trước khi gửi đi
+        addDataToList(name, ws, qrCodeMessage, number, ng);
+
         const options = {
           method: 'POST',
           contentType: 'application/json',
-          body: JSON.stringify({
-            name: document.querySelector('.input-name').value,
-            ws: document.querySelector('.input-ws').value,
-            Number: document.querySelector('.input-Number').value,
-            NG: document.querySelector('.input-NG').value,
-            class: qrCodeMessage + "$"
-          })
+          body: JSON.stringify({ name, ws, Number: number, NG: ng, class: qrCodeMessage + "$" })
         };
 
         fetch(API_URL, options)
