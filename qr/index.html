@@ -160,13 +160,21 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbxYuNTZTlnhaVZlgPEtQSoBs1AVRt_PjoJx0HQ1xANV2EjPOTcKRgGGmvSG71wkvvWx/exec";
         const options = {
           method: 'POST',
-          contentType: 'application/json',
+          headers: {
+            'Content-Type': 'application/json' // Đảm bảo header được định rõ
+          },
           body: JSON.stringify({ name, ws, Number: number, NG: ng, class: code + "$" })
         };
 
         fetch(API_URL, options)
-          .then(response => response.json())
-          .then(data => console.log(data));
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok.');
+            return response.json();
+          })
+          .then(data => {
+            console.log(data);
+          })
+          .catch(error => console.error('There was a problem with the fetch operation:', error));
 
         // Xóa giá trị các trường input
         document.querySelector('.input-code').value = '';
@@ -223,13 +231,19 @@
 
         const options = {
           method: 'POST',
-          contentType: 'application/json',
+          headers: {
+            'Content-Type': 'application/json' // Đảm bảo header được định rõ
+          },
           body: JSON.stringify({ name, ws, Number: number, NG: ng, class: qrCodeMessage + "$" })
         };
 
         fetch(API_URL, options)
-          .then(response => response.json())
-          .then(data => startScan());
+          .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok.');
+            return response.json();
+          })
+          .then(data => startScan())
+          .catch(error => console.error('There was a problem with the fetch operation:', error));
 
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
