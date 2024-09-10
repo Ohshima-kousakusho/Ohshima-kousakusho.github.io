@@ -30,11 +30,11 @@
       }
 
       .scrollable-list {
-        max-height: 200px; /* Chiều cao tối đa cho danh sách */
-        overflow-y: auto; /* Tạo thanh cuộn dọc */
-        border: 1px solid #ddd; /* Viền cho danh sách */
-        padding: 10px; /* Khoảng cách bên trong cho danh sách */
-        margin-top: 10px; /* Khoảng cách trên danh sách */
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-top: 10px;
       }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
@@ -80,10 +80,22 @@
         </div>
       </section>
 
-      <!-- Thêm danh sách để hiển thị dữ liệu đã nhập với thanh cuộn -->
+      <!-- Table to display input data -->
       <h2 class="title">Danh sách dữ liệu đã nhập</h2>
       <div class="scrollable-list">
-        <ul id="data-list" class="list"></ul>
+        <table class="table is-fullwidth is-bordered">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Workstation</th>
+              <th>Code</th>
+              <th>Number</th>
+              <th>NG</th>
+            </tr>
+          </thead>
+          <tbody id="data-table-body">
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -127,7 +139,7 @@
         const ng = document.querySelector('.input-NG').value;
 
         // Thêm dữ liệu vào danh sách trước khi gửi đi
-        addDataToList(name, ws, code, number, ng);
+        addDataToTable(name, ws, code, number, ng);
 
         const API_URL = "https://script.google.com/macros/s/AKfycbxYuNTZTlnhaVZlgPEtQSoBs1AVRt_PjoJx0HQ1xANV2EjPOTcKRgGGmvSG71wkvvWx/exec";
         const options = {
@@ -149,14 +161,20 @@
         play();
       }
 
-      // Hàm để thêm dữ liệu vào danh sách
-      function addDataToList(name, ws, code, number, ng) {
-        // Tạo một mục danh sách mới
-        const listItem = document.createElement('li');
-        listItem.textContent = `Name: ${name}, Workstation: ${ws}, Code: ${code}, Number: ${number}, NG: ${ng}`;
+      // Function to add data to the table
+      function addDataToTable(name, ws, code, number, ng) {
+        const tableBody = document.getElementById('data-table-body');
+        const newRow = document.createElement('tr');
 
-        // Thêm mục vào danh sách
-        document.getElementById('data-list').appendChild(listItem);
+        newRow.innerHTML = `
+          <td>${name}</td>
+          <td>${ws}</td>
+          <td>${code}</td>
+          <td>${number}</td>
+          <td>${ng}</td>
+        `;
+
+        tableBody.appendChild(newRow);
       }
 
       function play() { 
@@ -181,7 +199,7 @@
         const ng = document.querySelector('.input-NG').value;
 
         // Thêm dữ liệu vào danh sách trước khi gửi đi
-        addDataToList(name, ws, qrCodeMessage, number, ng);
+        addDataToTable(name, ws, qrCodeMessage, number, ng);
 
         const options = {
           method: 'POST',
