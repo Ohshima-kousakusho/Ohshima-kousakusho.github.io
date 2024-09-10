@@ -63,6 +63,10 @@
             大島工作所
           </p>
     </div> 
+
+        <!-- Thêm danh sách để hiển thị dữ liệu đã nhập -->
+<h2 class="title">Danh sách dữ liệu đã nhập</h2>
+<ul id="data-list" class="list"></ul>
       </section>      
 
 
@@ -106,28 +110,57 @@
         
           
       
-      function sendData(){
-        IsEmpty();
+     function sendData() {
+    if (!IsEmpty()) return;
 
-        if (document.querySelector('.input-name').value.replace(/[^a-zA-Z0-9]/g, '') != document.querySelector('.input-ws').value.replace(/[^a-zA-Z0-9]/g, '') ) {
-          play()
-        
+    // Kiểm tra nếu dữ liệu không khớp
+    if (document.querySelector('.input-name').value.replace(/[^a-zA-Z0-9]/g, '') !== document.querySelector('.input-ws').value.replace(/[^a-zA-Z0-9]/g, '')) {
+        play(); // Phát âm thanh cảnh báo
+        addDataToList(); // Thêm dữ liệu vào danh sách
         return false;
+    }
 
-      }
-        const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec"
-        const options = {
-          method: 'POST',
-          contentType: 'application/json',
-          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value})
-        }
-        const response = fetch(API_URL, options)
+    const API_URL = "https://script.google.com/macros/s/AKfycbxaPzh7JPRZ0Mj9-tGvc5okRA5LZ5gmIV18dE_CApyfxfJqWMlkSLahzzZFlmhkv11R0A/exec";
+    const options = {
+        method: 'POST',
+        contentType: 'application/json',
+        body: JSON.stringify({
+            name: document.querySelector('.input-name').value,
+            ws: document.querySelector('.input-ws').value
+        })
+    };
+
+    fetch(API_URL, options)
         .then(response => response.json())
-        .then(data=> console.log(data))
-          document.querySelector('.input-name').value=''
-          document.querySelector('.input-ws').value=''
-          document.getElementById("Name").focus();        
-      }
+        .then(data => {
+            console.log(data);
+            addDataToList(); // Thêm dữ liệu vào danh sách sau khi gửi
+        });
+
+    // Xóa giá trị các trường input
+    document.querySelector('.input-name').value = '';
+    document.querySelector('.input-ws').value = '';
+    document.getElementById("Name").focus();
+}
+
+// Hàm để thêm dữ liệu vào danh sách
+function addDataToList() {
+    const name = document.querySelector('.input-name').value;
+    const ws = document.querySelector('.input-ws').value;
+
+    // Tạo một mục danh sách mới
+    const listItem = document.createElement('li');
+    listItem.textContent = `チケット: ${name}, 図面: ${ws}`;
+
+    // Thêm mục vào danh sách
+    document.getElementById('data-list').appendChild(listItem);
+}
+
+function play() { 
+    var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
+    audio.play(); 
+}
+
  function play() { 
             var audio = new Audio( 
 'https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
