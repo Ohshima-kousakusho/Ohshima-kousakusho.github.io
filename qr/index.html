@@ -179,7 +179,8 @@
           <td>${ng}</td>
         `;
 
-        tableBody.appendChild(newRow);
+          // Chèn hàng mới vào đầu bảng
+    tableBody.insertBefore(newRow, tableBody.firstChild);
       }
 
       function play() { 
