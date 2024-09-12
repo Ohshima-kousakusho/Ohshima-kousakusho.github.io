@@ -44,6 +44,12 @@
       .column-code {
         width: 40%;
       }
+
+      /* CSS để dịch chuyển nội dung */
+      .shift-down {
+        margin-top: 20px;
+        transition: margin-top 0.5s ease-in-out;
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
@@ -88,7 +94,7 @@
     <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
 
     <!-- Bảng hiển thị dữ liệu đã nhập -->
-    <div class="container is-fluid">
+    <div class="container is-fluid" id="data-container">
       <section class="hero is-small is-primary">
         <div class="hero-body">
           <p class="title">大島工作所-電子日報 - design by NGUYEN THANH MINH</p>
@@ -233,12 +239,25 @@
 
         // Khởi động camera và xử lý lỗi chi tiết
         html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+          .then(() => {
+            document.getElementById('data-container').classList.add('shift-down'); // Dịch chuyển xuống
+          })
           .catch(err => {
             console.error("Lỗi khi khởi động camera:", err);
             document.getElementById('error-message').innerText = "Không thể khởi động camera. Vui lòng kiểm tra quyền truy cập camera và thử lại.";
           });
 
         play();
+      }
+
+      function stopScan() {
+        if (html5QrCode) {
+          html5QrCode.stop().then(() => {
+            document.getElementById('data-container').classList.remove('shift-down'); // Dịch chuyển lên
+          }).catch(err => {
+            console.error("Lỗi khi dừng camera:", err);
+          });
+        }
       }
 
       startScan(); 
