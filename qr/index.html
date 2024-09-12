@@ -49,6 +49,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
   <body>
+    <!-- Các nút chức năng -->
     <div class="field is-grouped">
       <p class="control">
         <button class="button is-info" onclick="ChangeName()">名前-NAME</button>
@@ -61,9 +62,10 @@
       </p>
     </div>
 
-    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
-    <input class="input is-normal input-ws is fullwidth" placeholder="Work stationー工程ー機械ー場所" id="WS">
-    <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
+    <!-- Các trường nhập dữ liệu -->
+    <input class="input is-normal input-name is-fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is-fullwidth" placeholder="Work stationー工程ー機械ー場所" id="WS">
+    <input class="input is-rounded is-large input-code is-fullwidth" placeholder="Codeー図面コード" id="code">
     <input class="input is-normal is-large input-Number" placeholder="Number-数量" id="Number-code">
 
     <div class="field is-horizontal">
@@ -79,9 +81,10 @@
       </div>
     </div>
 
+    <!-- Nút lưu dữ liệu -->
     <button class="button is-danger is-fullwidth" onclick="sendData()">Save-保存</button>
-    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
-    
+
+    <!-- Bảng hiển thị dữ liệu đã nhập -->
     <div class="container is-fluid">
       <section class="hero is-small is-primary">
         <div class="hero-body">
@@ -89,7 +92,6 @@
         </div>
       </section>
 
-      <!-- Table to display input data -->
       <h2 class="title">データ一覧 - Danh sách dữ liệu đã nhập</h2>
       <div class="scrollable-list">
         <table class="table is-fullwidth is-bordered">
@@ -107,6 +109,9 @@
         </table>
       </div>
     </div>
+
+    <!-- Vùng hiển thị Camera QR Code -->
+    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
 
     <script>
       function ChangeName(){
