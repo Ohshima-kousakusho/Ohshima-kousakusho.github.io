@@ -83,6 +83,10 @@
     <!-- Nút lưu dữ liệu -->
     <button class="button is-danger is-fullwidth" onclick="sendData()">Save-保存</button>
 
+    <!-- Vùng hiển thị Camera QR Code nằm ngay dưới nút Save -->
+    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
+    <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
+
     <!-- Bảng hiển thị dữ liệu đã nhập -->
     <div class="container is-fluid">
       <section class="hero is-small is-primary">
@@ -108,10 +112,6 @@
         </table>
       </div>
     </div>
-
-    <!-- Vùng hiển thị Camera QR Code -->
-    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
-    <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
 
     <script>
       function ChangeName(){
