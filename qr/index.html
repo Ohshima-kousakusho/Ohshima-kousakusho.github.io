@@ -37,7 +37,6 @@
         margin-top: 10px;
       }
 
-      /* CSS to control column widths */
       .column-workstation {
         width: 15%;
       }
@@ -112,6 +111,7 @@
 
     <!-- Vùng hiển thị Camera QR Code -->
     <div style="width: 800px; margin: 0 auto;" id="reader"></div>
+    <div id="error-message" style="color: red; text-align: center; margin-top: 10px;"></div>
 
     <script>
       function ChangeName(){
@@ -162,7 +162,8 @@
 
         fetch(API_URL, options)
           .then(response => response.json())
-          .then(data => console.log(data));
+          .then(data => console.log(data))
+          .catch(err => console.error("Lỗi khi gửi dữ liệu:", err));
 
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
@@ -229,8 +230,14 @@
         if (!IsEmpty()) return;
         document.getElementById('reader').innerHTML = '';
         html5QrCode = new Html5Qrcode('reader');
+
+        // Khởi động camera và xử lý lỗi chi tiết
         html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-          .catch(err => console.error("Lỗi khi khởi động camera:", err));
+          .catch(err => {
+            console.error("Lỗi khi khởi động camera:", err);
+            document.getElementById('error-message').innerText = "Không thể khởi động camera. Vui lòng kiểm tra quyền truy cập camera và thử lại.";
+          });
+
         play();
       }
 
