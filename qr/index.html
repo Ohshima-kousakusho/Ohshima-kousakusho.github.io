@@ -171,16 +171,16 @@
         const tableBody = document.getElementById('data-table-body');
         const newRow = document.createElement('tr');
 
-        newRow.innerHTML = 
+        newRow.innerHTML = `
           <td>${name}</td>
           <td>${ws}</td>
           <td>${code}</td>
           <td>${number}</td>
           <td>${ng}</td>
-        ;
+        `;
 
-          // Chèn hàng mới vào đầu bảng
-    tableBody.insertBefore(newRow, tableBody.firstChild);
+        // Chèn hàng mới vào đầu bảng
+        tableBody.insertBefore(newRow, tableBody.firstChild);
       }
 
       function play() { 
@@ -213,7 +213,8 @@
 
         fetch(API_URL, options)
           .then(response => response.json())
-          .then(data => startScan());
+          .then(data => startScan())
+          .catch(err => console.error("Lỗi khi gửi dữ liệu:", err));
 
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
@@ -224,7 +225,8 @@
         if (!IsEmpty()) return;
         document.getElementById('reader').innerHTML = '';
         html5QrCode = new Html5Qrcode('reader');
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
+          .catch(err => console.error("Lỗi khi khởi động camera:", err));
         play();
       }
 
@@ -232,4 +234,3 @@
     </script>
   </body>
 </html>
-
