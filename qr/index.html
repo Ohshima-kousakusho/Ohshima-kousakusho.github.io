@@ -45,16 +45,41 @@
       .column-code {
         width: 40%; /* Make Code column larger */
       }
-      
-      #reader {
-        margin: 20px 0; /* Khoảng cách giữa camera và các phần tử khác */
-        z-index: 10; /* Đảm bảo camera ở trên cùng */
-      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
   <body>
-    <!-- Vùng hiển thị Camera QR Code -->
+    <div class="field is-grouped">
+      <p class="control">
+        <button class="button is-info" onclick="ChangeName()">名前-NAME</button>
+      </p>
+      <p class="control">
+        <button class="button is-success" onclick="ChangeWS()">工程-WORK</button>
+      </p>
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
+      </p>
+    </div>
+
+    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is fullwidth" placeholder="Work stationー工程ー機械ー場所" id="WS">
+    <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
+    <input class="input is-normal is-large input-Number" placeholder="Number-数量" id="Number-code">
+
+    <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label">不良/不足数</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <input class="input is-small input-NG" placeholder="不良数/不足数-Số hàng hỏng hoặc thiếu" id="NG-code">
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <button class="button is-danger is-fullwidth" onclick="sendData()">Save-保存</button>
     <div style="width: 800px; margin: 0 auto;" id="reader"></div>
     
     <div class="container is-fluid">
@@ -63,38 +88,6 @@
           <p class="title">大島工作所-電子日報 - design by NGUYEN THANH MINH</p>
         </div>
       </section>
-
-      <div class="field is-grouped">
-        <p class="control">
-          <button class="button is-info" onclick="ChangeName()">名前-NAME</button>
-        </p>
-        <p class="control">
-          <button class="button is-success" onclick="ChangeWS()">工程-WORK</button>
-        </p>
-        <p class="control">
-          <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
-        </p>
-      </div>
-
-      <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
-      <input class="input is-normal input-ws is fullwidth" placeholder="Work stationー工程ー機械ー場所" id="WS">
-      <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
-      <input class="input is-normal is-large input-Number" placeholder="Number-数量" id="Number-code">
-
-      <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label class="label">不良/不足数</label>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <p class="control">
-              <input class="input is-small input-NG" placeholder="不良数/不足数-Số hàng hỏng hoặc thiếu" id="NG-code">
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <button class="button is-danger is-fullwidth" onclick="sendData()">Save-保存</button>
 
       <!-- Table to display input data -->
       <h2 class="title">データ一覧 - Danh sách dữ liệu đã nhập</h2>
@@ -178,15 +171,16 @@
         const tableBody = document.getElementById('data-table-body');
         const newRow = document.createElement('tr');
 
-        newRow.innerHTML = `
+        newRow.innerHTML = 
           <td>${name}</td>
           <td>${ws}</td>
           <td>${code}</td>
           <td>${number}</td>
           <td>${ng}</td>
-        `;
+        ;
 
-        tableBody.insertBefore(newRow, tableBody.firstChild);
+          // Chèn hàng mới vào đầu bảng
+    tableBody.insertBefore(newRow, tableBody.firstChild);
       }
 
       function play() { 
@@ -234,9 +228,8 @@
         play();
       }
 
-      window.onload = function() {
-        setTimeout(startScan, 1000); // Khởi động camera sau khi trang tải xong
-      };
+      startScan(); 
     </script>
   </body>
 </html>
+
