@@ -8,8 +8,8 @@
       button:focus{background:pink; color:blue;}
       .button {
         display: inline-block;
-        padding: 15px 30px;
-        font-size: 30px;
+        padding: 10px 20px;
+        font-size: 18px;
         cursor: pointer;
         text-align: center;
         text-decoration: none;
@@ -17,19 +17,24 @@
         color: #fff;
         background-color: purple;
         border: none;
-        border-radius: 15px;
-        box-shadow: 0 9px #999;
+        border-radius: 10px;
+        box-shadow: 0 5px #999;
       }
 
       .button:hover {background-color: #58257b}
 
       .button:active {
         background-color: #58257b;
-        box-shadow: 0 5px #666;
-        transform: translateY(4px);
+        box-shadow: 0 3px #666;
+        transform: translateY(2px);
+      }
+
+      .button.is-fullwidth {
+        font-size: 24px;
+        padding: 15px 30px;
+        margin-top: 10px;
       }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
   <body>
     <div class="field is-grouped">
@@ -48,6 +53,11 @@
           QR-Code 
         </button>
       </p>
+      <p class="control">
+        <button class="button is-primary" onclick="sendSavedData()">
+          データ送信
+        </button>
+      </p>
     </div>
 
     <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
@@ -56,8 +66,6 @@
     <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code">
   
     <button class="button is-info is-fullwidth" onclick="sendData()">Save-保存</button>
-    <button class="button is-primary is-fullwidth" onclick="sendSavedData()">Send Stored Data-データ送信</button>
-    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
   
     <div class="container is-fluid">
       <section class="hero is-small  is-primary">
@@ -116,8 +124,6 @@
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.getElementById("code").focus();
-        
-        play();
       }
 
       function sendSavedData() {
@@ -148,49 +154,6 @@
 
       // Kiểm tra và gửi dữ liệu khi kết nối mạng trở lại
       window.addEventListener('online', sendSavedData);
-
-      const config = { fps: 5, qrbox: 450 };
-      let html5QrCode;
-
-      function qrCodeSuccessCallback(message) {
-        onScanSuccess(message);
-      }
-
-      function play() { 
-        var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
-        audio.play(); 
-      }
-           
-      function onScanSuccess(qrCodeMessage) {
-        html5QrCode.stop();
-
-        let data = {
-          name: document.querySelector('.input-name').value,
-          ws: document.querySelector('.input-ws').value,
-          Number: document.querySelector('.input-Number').value,
-          class: qrCodeMessage + "$"
-        };
-
-        let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
-        savedData.push(data);
-        localStorage.setItem('unsentData', JSON.stringify(savedData));
-
-        document.querySelector('.input-code').value = '';
-        document.querySelector('.input-Number').value = '';
-        startScan();
-        play();
-      }
-
-      function startScan() {
-        if (!IsEmpty()) return;
-
-        document.getElementById('reader').innerHTML = '';
-        html5QrCode = new Html5Qrcode('reader');
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-        play();
-      }
-
-      startScan();
     </script>
   </body>
 </html>
