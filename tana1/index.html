@@ -122,8 +122,6 @@
           
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
-          let sentData = []; // Mảng để lưu các giá trị đã gửi thành công
-
           for (let i = 0; i < savedData.length; i++) {
             const data = savedData[i];
             const options = {
@@ -132,23 +130,19 @@
               body: JSON.stringify(data)
             };
 
-            // Kiểm tra trùng lặp trước khi gửi
-            if (!sentData.some(item => JSON.stringify(item) === JSON.stringify(data))) {
-              try {
-                const response = await fetch(API_URL, options);
-                if (response.ok) {
-                  // Xóa dữ liệu đã gửi thành công khỏi localStorage
-                  savedData.splice(i, 1);
-                  localStorage.setItem('unsentData', JSON.stringify(savedData));
-                  sentData.push(data); // Lưu dữ liệu đã gửi thành công
-                  i--; // Điều chỉnh lại chỉ số sau khi xóa
-                } else {
-                  console.error('Error:', response.statusText);
-                }
-              } catch (err) {
-                console.error('Error:', err);
-                break; // Thử lại sau nếu có lỗi
+            try {
+              const response = await fetch(API_URL, options);
+              if (response.ok) {
+                // Xóa dữ liệu đã gửi thành công khỏi localStorage
+                savedData.splice(i, 1);
+                localStorage.setItem('unsentData', JSON.stringify(savedData));
+                i--; // Điều chỉnh lại chỉ số sau khi xóa
+              } else {
+                console.error('Error:', response.statusText);
               }
+            } catch (err) {
+              console.error('Error:', err);
+              break; // Thử lại sau nếu có lỗi
             }
           }
           
