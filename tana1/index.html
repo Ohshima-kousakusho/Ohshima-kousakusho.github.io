@@ -118,6 +118,8 @@
       async function sendSavedData() {
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         if (savedData.length > 0) {
+          alert("Transferring data to Google Sheets...");
+          
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
           let sentData = []; // Mảng để lưu các giá trị đã gửi thành công
@@ -148,6 +150,10 @@
                 break; // Thử lại sau nếu có lỗi
               }
             }
+          }
+          
+          if (savedData.length === 0) {
+            alert("All data has been successfully transferred.");
           }
         } else {
           alert("No data to send!");
