@@ -54,7 +54,7 @@
     <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code" type="text">
     <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code">
   
-    <button class="button is-info is-fullwidth" onclick="sendData()">Save-保存</button>
+    <button class="button is-info is-fullwidth" onclick="saveAndStoreInput()">Save-保存</button>
   
     <div class="container is-fluid">
       <section class="hero is-small  is-primary">
@@ -90,7 +90,7 @@
         return true;
       }
 
-      function sendData() {
+      function saveAndStoreInput() {
         if (!IsEmpty()) return;
         if (document.querySelector('.input-code').value === "") {
           alert("QRコードを入力してください-Hãy nhập mã hàng");
@@ -101,11 +101,11 @@
           name: document.querySelector('.input-name').value,
           ws: document.querySelector('.input-ws').value,
           Number: document.querySelector('.input-Number').value,
-          class: document.querySelector('.input-code').value
+          class: document.querySelector('.input-code').value.split('').map((char, index) => ({
+            char,
+            timestamp: new Date().getTime() + index
+          }))
         };
-
-        // Chuyển đổi giá trị trong input code thành chuỗi để giữ nguyên định dạng
-        data.class = String(data.class);
 
         // Lấy dữ liệu đã lưu trong localStorage
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
@@ -116,9 +116,6 @@
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.getElementById("code").focus();
-
-        // Gửi dữ liệu ngay lập tức sau khi lưu
-        sendSavedData();
       }
 
       async function sendSavedData() {
