@@ -39,7 +39,7 @@
         <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
       </p>
       <p class="control">
-        <button class="button  is-success" onclick="ChangeWS()">半－完成品</button>
+        <button class="button is-success" onclick="ChangeWS()">半－完成品</button>
       </p>
       <p class="control">
         <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
@@ -101,10 +101,7 @@
           name: document.querySelector('.input-name').value,
           ws: document.querySelector('.input-ws').value,
           Number: document.querySelector('.input-Number').value,
-          class: document.querySelector('.input-code').value.split('').map((char, index) => ({
-            char,
-            timestamp: new Date().getTime() + index
-          }))
+          class: document.querySelector('.input-code').value.split('').map((char) => `${char}$`)
         };
 
         // Lấy dữ liệu đã lưu trong localStorage
