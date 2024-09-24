@@ -45,18 +45,12 @@
         text-align: left;
       }
       td.code-column {
-        width: 50%; /* Set the Code column width */
+        width: 70%; /* Set the Code column width */
       }
     </style>
   </head>
   <body>
     <div class="field is-grouped">
-      <p class="control">
-        <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
-      </p>
-      <p class="control">
-        <button class="button is-success" onclick="ChangeWS()">半－完成品</button>
-      </p>
       <p class="control">
         <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
       </p>
@@ -65,8 +59,6 @@
       </p>
     </div>
 
-    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
-    <input class="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id="WS">
     <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code" type="text">
     <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code">
   
@@ -86,8 +78,6 @@
     <table id="savedDataTable">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>半製品－完成品</th>
           <th class="code-column">Code</th>
           <th>Number</th>
         </tr>
@@ -98,24 +88,14 @@
     </table>
 
     <script>
-      function ChangeName() {
-        document.querySelector('.input-name').value = '';
-        document.getElementById("Name").focus();
-      }
-
-      function ChangeWS() {
-        document.querySelector('.input-ws').value = '';
-        document.getElementById("WS").focus();
-      }
-
       function ChangeCode() {
         document.querySelector('.input-code').value = '';
         document.getElementById("code").focus();
       }
 
       function IsEmpty() {
-        if (document.querySelector('.input-ws').value === "") {
-          alert("半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm");
+        if (document.querySelector('.input-code').value === "") {
+          alert("QRコードを入力してください-Hãy nhập mã hàng");
           return false;
         }
         return true;
@@ -123,16 +103,10 @@
 
       function saveAndStoreInput() {
         if (!IsEmpty()) return;
-        if (document.querySelector('.input-code').value === "") {
-          alert("QRコードを入力してください-Hãy nhập mã hàng");
-          return false;
-        }
 
         let data = {
-          name: document.querySelector('.input-name').value,
-          ws: document.querySelector('.input-ws').value,
-          Number: document.querySelector('.input-Number').value,
-          class: document.querySelector('.input-code').value + "$"  // Appending $ to the entire string
+          class: document.querySelector('.input-code').value + "$",  // Appending $ to the entire string
+          Number: document.querySelector('.input-Number').value
         };
 
         // Lấy dữ liệu đã lưu trong localStorage
@@ -154,8 +128,6 @@
         const newRow = document.createElement("tr");
 
         newRow.innerHTML = `
-          <td>${data.name}</td>
-          <td>${data.ws}</td>
           <td class="code-column">${data.class}</td>
           <td>${data.Number}</td>
         `;
@@ -185,6 +157,7 @@
                 // Xóa dữ liệu đã gửi thành công khỏi localStorage
                 savedData.splice(i, 1);
                 localStorage.setItem('unsentData', JSON.stringify(savedData));
+                removeTableRow(i); // Xóa hàng khỏi giao diện
                 i--; // Điều chỉnh lại chỉ số sau khi xóa
               } else {
                 console.error('Error:', response.statusText);
@@ -201,6 +174,11 @@
         } else {
           alert("No data to send!");
         }
+      }
+
+      function removeTableRow(index) {
+        const tableBody = document.querySelector("#savedDataTable tbody");
+        tableBody.deleteRow(index);
       }
 
       // Kiểm tra và gửi dữ liệu khi kết nối mạng trở lại
