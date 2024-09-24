@@ -4,8 +4,8 @@
     <base target="_top">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <style>
-      input:focus{background:yellow; color:blue;}
-      button:focus{background:pink; color:blue;}
+      input:focus { background: yellow; color: blue; }
+      button:focus { background: pink; color: blue; }
       .button {
         display: inline-block;
         padding: 10px 20px;
@@ -20,15 +20,12 @@
         border-radius: 10px;
         box-shadow: 0 5px #999;
       }
-
-      .button:hover {background-color: #58257b}
-
+      .button:hover { background-color: #58257b; }
       .button:active {
         background-color: #58257b;
         box-shadow: 0 3px #666;
         transform: translateY(2px);
       }
-
       .button.is-fullwidth {
         font-size: 24px;
         padding: 15px 30px;
@@ -39,24 +36,16 @@
   <body>
     <div class="field is-grouped">
       <p class="control">
-        <button class="button is-warning" onclick="ChangeName()">
-          名前-NAME 
-        </button>
+        <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
       </p>
       <p class="control">
-        <button class="button  is-success" onclick="ChangeWS()">
-          半－完成品
-        </button>
+        <button class="button  is-success" onclick="ChangeWS()">半－完成品</button>
       </p>
       <p class="control">
-        <button class="button is-warning" onclick="ChangeCode()">
-          QR-Code 
-        </button>
+        <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
       </p>
       <p class="control">
-        <button class="button is-primary" onclick="sendSavedData()">
-          データ送信
-        </button>
+        <button class="button is-primary" onclick="sendSavedData()">データ送信</button>
       </p>
     </div>
 
@@ -78,6 +67,7 @@
     </div>
 
     <script>
+      // Hàm để đặt lại trường nhập liệu và lấy lại tiêu điểm
       function ChangeName() {
         document.querySelector('.input-name').value = '';
         document.getElementById("Name").focus();
@@ -93,6 +83,7 @@
         document.getElementById("code").focus();
       }
 
+      // Kiểm tra xem trường nhập liệu "半製品－完成品" có rỗng hay không
       function IsEmpty() {
         if (document.querySelector('.input-ws').value === "") {
           alert("半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm");
@@ -101,6 +92,7 @@
         return true;
       }
 
+      // Lưu dữ liệu vào localStorage và gửi ngay lập tức
       function sendData() {
         if (!IsEmpty()) return;
         if (document.querySelector('.input-code').value === "") {
@@ -108,62 +100,66 @@
           return false;
         }
 
+        // Thu thập dữ liệu từ các trường nhập liệu
         let data = {
           name: document.querySelector('.input-name').value,
           ws: document.querySelector('.input-ws').value,
           Number: document.querySelector('.input-Number').value,
           class: document.querySelector('.input-code').value
         };
-        
+
+        // Đảm bảo rằng dữ liệu trong input code luôn được giữ nguyên dạng text
+        data.class = String(data.class);
+
         // Lấy dữ liệu đã lưu trong localStorage
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
-
-        // Kiểm tra trùng lặp
-        let isDuplicate = savedData.some(item => 
-          item.name === data.name && 
-          item.ws === data.ws && 
-          item.Number === data.Number && 
-          item.class === data.class
-        );
-
-        if (!isDuplicate) {
-          // Lưu dữ liệu vào localStorage nếu không trùng lặp
-          savedData.push(data);
-          localStorage.setItem('unsentData', JSON.stringify(savedData));
-        } else {
-          alert("Dữ liệu này đã được lưu trữ tạm thời.");
-        }
+        savedData.push(data);
+        localStorage.setItem('unsentData', JSON.stringify(savedData));
 
         // Xóa input fields sau khi lưu
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.getElementById("code").focus();
+
+        // Gửi dữ liệu ngay lập tức sau khi lưu
+        sendSavedData();
       }
 
-      function sendSavedData() {
+      // Gửi dữ liệu lưu trong localStorage đến Google Sheets
+      async function sendSavedData() {
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         if (savedData.length > 0) {
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
-          savedData.forEach((data, index) => {
+          let sentData = []; // Mảng để lưu các giá trị đã gửi thành công
+
+          for (let i = 0; i < savedData.length; i++) {
+            const data = savedData[i];
             const options = {
               method: 'POST',
               contentType: 'application/json',
               body: JSON.stringify(data)
             };
 
-            fetch(API_URL, options)
-              .then(response => {
+            // Kiểm tra trùng lặp trước khi gửi
+            if (!sentData.some(item => JSON.stringify(item) === JSON.stringify(data))) {
+              try {
+                const response = await fetch(API_URL, options);
                 if (response.ok) {
                   // Xóa dữ liệu đã gửi thành công khỏi localStorage
-                  savedData.splice(index, 1);
+                  savedData.splice(i, 1);
                   localStorage.setItem('unsentData', JSON.stringify(savedData));
+                  sentData.push(data); // Lưu dữ liệu đã gửi thành công
+                  i--; // Điều chỉnh lại chỉ số sau khi xóa
                 } else {
                   console.error('Error:', response.statusText);
                 }
-              })
-              .catch(err => console.error('Error:', err));
-          });
+              } catch (err) {
+                console.error('Error:', err);
+                break; // Thử lại sau nếu có lỗi
+              }
+            }
+          }
         } else {
           alert("No data to send!");
         }
