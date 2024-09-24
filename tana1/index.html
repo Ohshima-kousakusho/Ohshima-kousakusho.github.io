@@ -153,11 +153,14 @@
             };
 
             fetch(API_URL, options)
-              .then(response => response.json())
-              .then(() => {
-                // Xóa dữ liệu đã gửi thành công khỏi localStorage
-                savedData.splice(index, 1);
-                localStorage.setItem('unsentData', JSON.stringify(savedData));
+              .then(response => {
+                if (response.ok) {
+                  // Xóa dữ liệu đã gửi thành công khỏi localStorage
+                  savedData.splice(index, 1);
+                  localStorage.setItem('unsentData', JSON.stringify(savedData));
+                } else {
+                  console.error('Error:', response.statusText);
+                }
               })
               .catch(err => console.error('Error:', err));
           });
