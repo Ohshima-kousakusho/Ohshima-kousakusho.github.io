@@ -7,155 +7,190 @@
       input:focus{background:yellow; color:blue;}
       button:focus{background:pink; color:blue;}
       .button {
-  display: inline-block;
-  padding: 15px 30px;
-  font-size: 30px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  outline: none;
-  color: #fff;
-  background-color: purple;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 9px #999;
-}
+        display: inline-block;
+        padding: 15px 30px;
+        font-size: 30px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: purple;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 9px #999;
+      }
 
-.button:hover {background-color: #58257b}
+      .button:hover {background-color: #58257b}
 
-.button:active {
-  background-color: #58257b;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
+      .button:active {
+        background-color: #58257b;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
-    
   </head>
   <body>
-    
-    
     <div class="field is-grouped">
-        <p class="control">
-          <button class="button is-warning" onclick="ChangeName()">
-            名前-NAME </button>
-         </p>
-        <p class="control">
-          <button class="button  is-success" onclick="ChangeWS()">
-            半－完成品</button>
-         </p>
-        <p class="control">
-          <button class="button is-warning" onclick="ChangeCode()">
-            QR-Code </button>
-        
-          
-      </div>
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeName()">
+          名前-NAME 
+        </button>
+      </p>
+      <p class="control">
+        <button class="button  is-success" onclick="ChangeWS()">
+          半－完成品
+        </button>
+      </p>
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeCode()">
+          QR-Code 
+        </button>
+      </p>
+    </div>
 
-    <input class ="input is-normal input-name is fullwidth" placeholder="Nameー名前" id ="Name">
-    <input class ="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id ="WS" >
-    
-    <input class ="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
-    <input class="input is-normal is-warning input-Number "   placeholder="Number-数量" id="Number-code">
-
-       
-      
+    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id="WS">
+    <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
+    <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code">
   
+    <button class="button is-info is-fullwidth" onclick="sendData()">Save-保存</button>
+    <button class="button is-primary is-fullwidth" onclick="sendSavedData()">Send Stored Data-データ送信</button>
+    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
   
-    <button class="button is-info is-fullwidth " onclick="sendData()">Save-保存</button>
-       <div style=" width: 800px; margin: 0 auto;" id="reader"></div>
-
-       
-  <div class = "container is-fluid">
-      <section class ="hero is-small  is-primary">
-        <div class ="hero-body">
-          <p class = "title">
-           大島工作所-棚卸-CHỈ DÙNG ĐỂ KIỂM KHO
+    <div class="container is-fluid">
+      <section class="hero is-small  is-primary">
+        <div class="hero-body">
+          <p class="title">
+            大島工作所-棚卸-CHỈ DÙNG ĐỂ KIỂM KHO
           </p>
         </div> 
- 
       </section>      
-
+    </div>
 
     <script>
-      function ChangeName(){
-        document.querySelector('.input-name').value=''
+      function ChangeName() {
+        document.querySelector('.input-name').value = '';
         document.getElementById("Name").focus();
       }
-      function ChangeWS(){
-        document.querySelector('.input-ws').value=''
+
+      function ChangeWS() {
+        document.querySelector('.input-ws').value = '';
         document.getElementById("WS").focus();
       }
-      function ChangeCode(){
-        document.querySelector('.input-code').value=''
+
+      function ChangeCode() {
+        document.querySelector('.input-code').value = '';
         document.getElementById("code").focus();
       }
+
       function IsEmpty() {
         if (document.querySelector('.input-ws').value === "") {
           alert("半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm");
-        return false;
+          return false;
+        }
+        return true;
       }
-  return true;
-}
-      function sendData(){
-        IsEmpty() ;
+
+      function sendData() {
+        if (!IsEmpty()) return;
         if (document.querySelector('.input-code').value === "") {
           alert("QRコードを入力してください-Hãy nhập mã hàng");
-        return false;
-      }
-        const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec"
-        const options = {
-          method: 'POST',
-          contentType: 'application/json',
-          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value,Number: document.querySelector('.input-Number').value, class:document.querySelector('.input-code').value+"$"})
+          return false;
         }
-        const response = fetch(API_URL, options)
-        .then(response => response.json())
-        .then(data=> console.log(data))
-          document.querySelector('.input-code').value=''
-          document.querySelector('.input-Number').value=''
-          
-          document.getElementById("code").focus();
+
+        let data = {
+          name: document.querySelector('.input-name').value,
+          ws: document.querySelector('.input-ws').value,
+          Number: document.querySelector('.input-Number').value,
+          class: document.querySelector('.input-code').value + "$"
+        };
+        
+        // Lưu dữ liệu vào localStorage
+        let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
+        savedData.push(data);
+        localStorage.setItem('unsentData', JSON.stringify(savedData));
+
+        // Xóa input fields sau khi lưu
+        document.querySelector('.input-code').value = '';
+        document.querySelector('.input-Number').value = '';
+        document.getElementById("code").focus();
         
         play();
       }
 
-       const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec"
-       let html5QrCode;
-       const config={fps:5,qrbox: 450}
-      function qrCodeSuccessCallback(message) {
-        onScanSuccess(message)
-      }
-      function play() { 
-            var audio = new Audio( 
-'https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
+      function sendSavedData() {
+        let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
+        if (savedData.length > 0) {
+          const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
-            audio.play(); 
-            }
+          savedData.forEach((data, index) => {
+            const options = {
+              method: 'POST',
+              contentType: 'application/json',
+              body: JSON.stringify(data)
+            };
+
+            fetch(API_URL, options)
+              .then(response => response.json())
+              .then(() => {
+                // Xóa dữ liệu đã gửi thành công khỏi localStorage
+                savedData.splice(index, 1);
+                localStorage.setItem('unsentData', JSON.stringify(savedData));
+              })
+              .catch(err => console.error('Error:', err));
+          });
+        } else {
+          alert("No data to send!");
+        }
+      }
+
+      // Kiểm tra và gửi dữ liệu khi kết nối mạng trở lại
+      window.addEventListener('online', sendSavedData);
+
+      const config = { fps: 5, qrbox: 450 };
+      let html5QrCode;
+
+      function qrCodeSuccessCallback(message) {
+        onScanSuccess(message);
+      }
+
+      function play() { 
+        var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3'); 
+        audio.play(); 
+      }
            
       function onScanSuccess(qrCodeMessage) {
-       html5QrCode.stop()
-        const options = {
-          method: 'POST',
-          contentType: 'application/json',
-          body: JSON.stringify({name: document.querySelector('.input-name').value,ws: document.querySelector('.input-ws').value,Number: document.querySelector('.input-Number').value, class:qrCodeMessage+"$"})
-        }
-        const response = fetch(API_URL, options)
-        .then(response => response.json())
-        .then(data=> startScan())
-          document.querySelector('.input-code').value=''
-          document.querySelector('.input-Number').value=''
-         
-      }
+        html5QrCode.stop();
 
-      function startScan(){
-        IsEmpty();
-        document.getElementById('reader').innerHTML =''
-        html5QrCode = new Html5Qrcode('reader')
-        html5QrCode.start ({ facingMode: "environment"},config,qrCodeSuccessCallback)
+        let data = {
+          name: document.querySelector('.input-name').value,
+          ws: document.querySelector('.input-ws').value,
+          Number: document.querySelector('.input-Number').value,
+          class: qrCodeMessage + "$"
+        };
+
+        let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
+        savedData.push(data);
+        localStorage.setItem('unsentData', JSON.stringify(savedData));
+
+        document.querySelector('.input-code').value = '';
+        document.querySelector('.input-Number').value = '';
+        startScan();
         play();
       }
 
-        startScan(); 
+      function startScan() {
+        if (!IsEmpty()) return;
+
+        document.getElementById('reader').innerHTML = '';
+        html5QrCode = new Html5Qrcode('reader');
+        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+        play();
+      }
+
+      startScan();
     </script>
   </body>
 </html>
