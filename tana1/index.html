@@ -101,7 +101,7 @@
           name: document.querySelector('.input-name').value,
           ws: document.querySelector('.input-ws').value,
           Number: document.querySelector('.input-Number').value,
-          class: document.querySelector('.input-code').value.split('').map((char) => `${char}$`)
+          class: document.querySelector('.input-code').value + "$"  // Appending $ to the entire string
         };
 
         // Lấy dữ liệu đã lưu trong localStorage
