@@ -33,7 +33,6 @@
       }
       table {
         width: 100%;
-        margin-top: 20px;
         border-collapse: collapse;
       }
       th, td {
@@ -47,10 +46,21 @@
       td.code-column {
         width: 70%; /* Set the Code column width */
       }
+      .table-container {
+        max-height: 300px; /* Adjust this height as needed */
+        overflow-y: auto;
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
     <div class="field is-grouped">
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
+      </p>
+      <p class="control">
+        <button class="button is-success" onclick="ChangeWS()">半－完成品</button>
+      </p>
       <p class="control">
         <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
       </p>
@@ -59,6 +69,8 @@
       </p>
     </div>
 
+    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id="WS">
     <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code" type="text">
     <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code">
   
@@ -74,20 +86,33 @@
       </section>      
     </div>
 
-    <!-- Table to display saved items -->
-    <table id="savedDataTable">
-      <thead>
-        <tr>
-          <th class="code-column">Code</th>
-          <th>Number</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Rows will be added dynamically here -->
-      </tbody>
-    </table>
+    <!-- Container to allow scrolling -->
+    <div class="table-container">
+      <!-- Table to display saved items -->
+      <table id="savedDataTable">
+        <thead>
+          <tr>
+            <th class="code-column">Code</th>
+            <th>Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be added dynamically here -->
+        </tbody>
+      </table>
+    </div>
 
     <script>
+      function ChangeName() {
+        document.querySelector('.input-name').value = '';
+        document.getElementById("Name").focus();
+      }
+
+      function ChangeWS() {
+        document.querySelector('.input-ws').value = '';
+        document.getElementById("WS").focus();
+      }
+
       function ChangeCode() {
         document.querySelector('.input-code').value = '';
         document.getElementById("code").focus();
@@ -105,6 +130,8 @@
         if (!IsEmpty()) return;
 
         let data = {
+          name: document.querySelector('.input-name').value,
+          ws: document.querySelector('.input-ws').value,
           class: document.querySelector('.input-code').value + "$",  // Appending $ to the entire string
           Number: document.querySelector('.input-Number').value
         };
