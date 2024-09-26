@@ -281,11 +281,13 @@
             }
           });
         });
+        
+document.getElementById('code').addEventListener('input', function () {
+    // Chỉ loại bỏ các ký tự không phải là chữ cái, số và các ký tự đặc biệt như !@#$%^&*()-_=+[]{}|;:',.<>?/
+    this.value = this.value.replace(/[^a-zA-Z0-9!@#$%^&*()-_=+\[\]{}|;:',.<>?/\\]/g, '');
+});
 
-        // Filter non-English characters in "code" input field
-        document.getElementById('code').addEventListener('input', function () {
-          this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
-        });
+    
       });
     </script>
   </body>
