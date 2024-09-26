@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_top">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <style>
@@ -264,22 +266,27 @@
 
       // Nhấn Enter để xuống dòng
       document.addEventListener('DOMContentLoaded', function () {
-    const inputs = document.querySelectorAll('input');
+        const inputs = document.querySelectorAll('input');
 
-    inputs.forEach((input, index) => {
-      input.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-          event.preventDefault(); // Ngăn hành động mặc định của Enter
-          const nextInput = inputs[index + 1]; // Chọn input tiếp theo
-          if (nextInput) {
-            nextInput.focus(); // Di chuyển tiêu điểm tới input tiếp theo
-          } else {
-            document.querySelector('.button.is-info').focus(); // Di chuyển đến nút Save nếu không còn input nào
-          }
-        }
+        inputs.forEach((input, index) => {
+          input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+              event.preventDefault(); // Ngăn hành động mặc định của Enter
+              const nextInput = inputs[index + 1]; // Chọn input tiếp theo
+              if (nextInput) {
+                nextInput.focus(); // Di chuyển tiêu điểm tới input tiếp theo
+              } else {
+                document.querySelector('.button.is-info').focus(); // Di chuyển đến nút Save nếu không còn input nào
+              }
+            }
+          });
+        });
+
+        // Filter non-English characters in "code" input field
+        document.getElementById('code').addEventListener('input', function () {
+          this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+        });
       });
-    });
-  });
     </script>
   </body>
 </html>
