@@ -30,11 +30,11 @@
       }
 
       .scrollable-list {
-        max-height: 200px; /* Chiều cao tối đa cho danh sách */
-        overflow-y: auto; /* Tạo thanh cuộn dọc */
-        border: 1px solid #ddd; /* Viền cho danh sách */
-        padding: 10px; /* Khoảng cách bên trong cho danh sách */
-        margin-top: 10px; /* Khoảng cách trên danh sách */
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-top: 10px;
       }
     </style>
   </head>
@@ -46,10 +46,14 @@
       <p class="control">
         <button class="button is-success" onclick="ChangeWS()">図面</button>
       </p>
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeExtra()">コード</button>
+      </p>
     </div>
 
     <input class="input is-normal input-name is fullwidth" placeholder="チケット" id="Name" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <input class="input is-normal input-ws is fullwidth" placeholder="図面" id="WS" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <input class="input is-normal input-extra is fullwidth" placeholder="コード" id="Extra" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
 
     <button class="button is-danger is-fullwidth" onclick="sendData()">Compare-比較</button>
     <div style="width: 800px; margin: 0 auto;" id="reader"></div>
@@ -61,7 +65,6 @@
         </div>
       </section>
 
-      <!-- Thêm danh sách để hiển thị dữ liệu đã nhập với thanh cuộn -->
       <h2 class="title">Danh sách dữ liệu đã nhập</h2>
       <div class="scrollable-list">
         <ul id="data-list" class="list"></ul>
@@ -79,8 +82,13 @@
         document.getElementById("WS").focus();
       }
 
+      function ChangeExtra() {
+        document.querySelector('.input-extra').value = '';
+        document.getElementById("Extra").focus();
+      }
+
       function IsEmpty() {
-        if (document.querySelector('.input-ws').value === "") {
+        if (!document.querySelector('.input-name').value || !document.querySelector('.input-ws').value || !document.querySelector('.input-extra').value) {
           alert("không thể so sánh giá trị rỗng");
           document.getElementById("Name").focus();
           return false;
@@ -93,22 +101,27 @@
       }
 
       document.querySelector('.input-name').addEventListener('change', function() {
-        console.log('Input value changed to:', this.value);
         document.getElementById("WS").focus();
       });
 
       document.querySelector('.input-ws').addEventListener('change', function() {
-        console.log('Input value changed to:', this.value);
+        document.getElementById("Extra").focus();
+      });
+
+      document.querySelector('.input-extra').addEventListener('change', function() {
         sendData();
       });
 
       function sendData() {
         if (!IsEmpty()) return;
 
-        // Kiểm tra nếu dữ liệu không khớp
-        if (document.querySelector('.input-name').value.replace(/[^a-zA-Z0-9]/g, '') !== document.querySelector('.input-ws').value.replace(/[^a-zA-Z0-9]/g, '')) {
-          play(); // Phát âm thanh cảnh báo
-          addDataToList(); // Thêm dữ liệu vào danh sách
+        const nameValue = document.querySelector('.input-name').value.replace(/[^a-zA-Z0-9]/g, '');
+        const wsValue = document.querySelector('.input-ws').value.replace(/[^a-zA-Z0-9]/g, '');
+        const extraValue = document.querySelector('.input-extra').value.replace(/[^a-zA-Z0-9]/g, '');
+
+        if (nameValue !== wsValue || nameValue !== extraValue || wsValue !== extraValue) {
+          play();
+          addDataToList();
           return false;
         }
 
@@ -118,7 +131,8 @@
           contentType: 'application/json',
           body: JSON.stringify({
             name: document.querySelector('.input-name').value,
-            ws: document.querySelector('.input-ws').value
+            ws: document.querySelector('.input-ws').value,
+            extra: document.querySelector('.input-extra').value
           })
         };
 
@@ -126,25 +140,23 @@
           .then(response => response.json())
           .then(data => {
             console.log(data);
-            addDataToList(); // Thêm dữ liệu vào danh sách sau khi gửi
+            addDataToList();
           });
 
-        // Xóa giá trị các trường input
         document.querySelector('.input-name').value = '';
         document.querySelector('.input-ws').value = '';
+        document.querySelector('.input-extra').value = '';
         document.getElementById("Name").focus();
       }
 
-      // Hàm để thêm dữ liệu vào danh sách
       function addDataToList() {
         const name = document.querySelector('.input-name').value;
         const ws = document.querySelector('.input-ws').value;
+        const extra = document.querySelector('.input-extra').value;
 
-        // Tạo một mục danh sách mới
         const listItem = document.createElement('li');
-        listItem.textContent = `チケット: ${name}, 図面: ${ws}`;
+        listItem.textContent = `チケット: ${name}, 図面: ${ws}, コード: ${extra}`;
 
-        // Thêm mục vào danh sách
         document.getElementById('data-list').appendChild(listItem);
       }
 
