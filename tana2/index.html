@@ -96,27 +96,46 @@
 
       function sendData() {
         if (!IsEmpty()) return;
-        if (document.querySelector('.input-code').value === '') {
-          alert('QRコードを入力してください-Hãy nhập mã hàng');
-          return false;
+
+        const name = document.querySelector('.input-name').value.trim();
+        const ws = document.querySelector('.input-ws').value.trim();
+        const number = document.querySelector('.input-number').value.trim();
+        const code = document.querySelector('.input-code').value.trim();
+
+        if (!number) {
+          alert("Vui lòng nhập số lượng!");
+          return;
         }
-        const API_URL = "https://script.google.com/macros/s/AKfycbxqTL1Zf7inG4b1xFw2yUcsepIqbzKqIkKE4ZCcwnA_XGphScqevCeFw2Wn53EtInhf/exec";
+
+        if (!code) {
+          alert("Vui lòng nhập mã Code!");
+          return;
+        }
+
+        const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
         const options = {
           method: 'POST',
-          contentType: 'application/json',
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({
-            name: document.querySelector('.input-name').value,
-            ws: document.querySelector('.input-ws').value,
-            number: document.querySelector('.input-number').value,
-            code: document.querySelector('.input-code').value + "$"
-          })
+            name,
+            ws,
+            number,
+            code: code + "$"
+          }),
         };
+
         fetch(API_URL, options)
           .then(response => response.json())
-          .then(data => console.log(data));
-        document.querySelector('.input-code').value = '';
-        document.querySelector('.input-number').value = '';
-        document.getElementById('code').focus();
+          .then(data => {
+            console.log("Dữ liệu đã gửi:", data);
+            document.querySelector('.input-code').value = '';
+            document.querySelector('.input-number').value = '';
+            document.getElementById('code').focus();
+          })
+          .catch(err => console.error("Lỗi khi gửi dữ liệu:", err));
+
         play();
       }
 
