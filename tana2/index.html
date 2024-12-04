@@ -101,22 +101,23 @@
       }
 
       function sendData() {
-        if (!IsEmpty()) return;
-
-        const name = document.querySelector('.input-name').value.trim();
-        const ws = document.querySelector('.input-ws').value.trim();
-        const number = document.querySelector('.input-number').value.trim();
-        const code = document.querySelector('.input-code').value.trim();
-
-        if (!number) {
-          alert("Vui lòng nhập số lượng!");
-          return;
-        }
-
-        if (!code) {
-          alert("Vui lòng nhập mã Code!");
-          return;
-        }
+            if (!IsEmpty()) return;
+            if (document.querySelector('.input-code').value === "") {
+                alert("QRコードを入力してください-Hãy nhập mã hàng");
+                return false;
+            }
+            const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec";
+            const options = {
+                method: 'POST',
+                contentType: 'application/json',
+                body: JSON.stringify({
+                    name: document.querySelector('.input-name').value,
+                    ws: document.querySelector('.input-ws').value,
+                    Number: document.querySelector('.input-Number').value,
+                    NG: document.querySelector('.input-NG').value,
+                    class: document.querySelector('.input-code').value
+                })
+            };
 
         const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec"; // Thay YOUR_SCRIPT_ID bằng ID script của bạn
         const options = {
