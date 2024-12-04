@@ -120,7 +120,7 @@
         play();
       }
 
-      const config = { fps: 5, qrbox: 450 };
+      const config = { fps: 10, qrbox: 250 };
       let html5QrCode;
 
       function qrCodeSuccessCallback(message) {
@@ -135,11 +135,24 @@
       }
 
       function startScan() {
-        if (!IsEmpty()) return;
         document.getElementById('reader').innerHTML = '';
-        html5QrCode = new Html5Qrcode('reader');
-        html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
-        play();
+
+        try {
+          html5QrCode = new Html5Qrcode('reader');
+          html5QrCode
+            .start(
+              { facingMode: "environment" }, // Camera sau
+              config,
+              qrCodeSuccessCallback
+            )
+            .catch(err => {
+              console.error("Lỗi camera:", err);
+              alert("Không thể mở camera. Vui lòng kiểm tra quyền truy cập hoặc sử dụng HTTPS.");
+            });
+        } catch (err) {
+          console.error("Lỗi khởi động QR scanner:", err);
+          alert("Không thể khởi động trình quét. Vui lòng kiểm tra lại.");
+        }
       }
 
       startScan();
