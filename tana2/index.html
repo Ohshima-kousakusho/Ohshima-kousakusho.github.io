@@ -109,20 +109,13 @@
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.getElementById("code").focus();
-        play();
       }
 
       const config = { fps: 10, qrbox: 250 };
 
-      function play() {
-        var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3');
-        audio.play();
-      }
-
       function onScanSuccess(qrCodeMessage) {
         document.getElementById("code").value = qrCodeMessage;
-        play();
-        html5QrCode.stop();
+        html5QrCode.stop(); // Dừng camera sau khi quét thành công
       }
 
       function startScan() {
@@ -131,7 +124,7 @@
         try {
           navigator.mediaDevices.getUserMedia({ video: true }) // Kiểm tra quyền camera
             .then(stream => {
-              html5QrCode = new Html5Qrcode('reader');
+              html5QrCode = new Html5QrCode('reader');
               html5QrCode.start(
                 { facingMode: "environment" }, // Sử dụng camera sau
                 config,
