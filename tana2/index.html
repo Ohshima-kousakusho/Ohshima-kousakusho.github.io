@@ -42,9 +42,9 @@
       </p>
     </div>
 
-    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
-    <input class="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id="WS">
-    <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code" type="number" pattern="\d*" >
+    <input class="input is-normal input-name is-fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is-fullwidth" placeholder="半製品－完成品" id="WS">
+    <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code" type="number" pattern="\d*">
     <input class="input is-rounded is-large input-code is-fullwidth" placeholder="Codeー図面コード" id="code">
 
     <button class="button is-info is-fullwidth" onclick="sendData()">Save-保存</button>
@@ -89,10 +89,10 @@
           return false;
         }
 
-        const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec";
+        const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // Thay bằng URL thực của bạn
         const options = {
           method: 'POST',
-          contentType: 'application/json',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: document.querySelector('.input-name').value,
             ws: document.querySelector('.input-ws').value,
@@ -103,7 +103,8 @@
 
         fetch(API_URL, options)
           .then(response => response.json())
-          .then(data => console.log(data));
+          .then(data => console.log(data))
+          .catch(err => console.error("Error:", err));
 
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
@@ -111,8 +112,7 @@
         play();
       }
 
-      const config = { fps: 5, qrbox: 450 };
-      let html5QrCode;
+      const config = { fps: 10, qrbox: 250 };
 
       function play() {
         var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3');
@@ -126,10 +126,29 @@
       }
 
       function startScan() {
-        if (!IsEmpty()) return;
         document.getElementById('reader').innerHTML = '';
-        html5QrCode = new Html5Qrcode('reader');
-        html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess);
+
+        try {
+          navigator.mediaDevices.getUserMedia({ video: true }) // Kiểm tra quyền camera
+            .then(stream => {
+              html5QrCode = new Html5Qrcode('reader');
+              html5QrCode.start(
+                { facingMode: "environment" }, // Sử dụng camera sau
+                config,
+                onScanSuccess
+              ).catch(err => {
+                console.error("Lỗi khi khởi động QR scanner:", err);
+                alert("Không thể mở camera. Kiểm tra quyền truy cập hoặc HTTPS.");
+              });
+            })
+            .catch(err => {
+              console.error("Camera access denied:", err);
+              alert("Vui lòng cấp quyền truy cập camera để tiếp tục.");
+            });
+        } catch (err) {
+          console.error("Error initializing camera:", err);
+          alert("Không thể khởi động trình quét QR.");
+        }
       }
 
       startScan();
