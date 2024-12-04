@@ -4,16 +4,8 @@
     <base target="_top">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <style>
-      input:focus {
-        background: yellow;
-        color: blue;
-      }
-
-      button:focus {
-        background: pink;
-        color: blue;
-      }
-
+      input:focus { background: yellow; color: blue; }
+      button:focus { background: pink; color: blue; }
       .button {
         display: inline-block;
         padding: 15px 30px;
@@ -28,11 +20,7 @@
         border-radius: 15px;
         box-shadow: 0 9px #999;
       }
-
-      .button:hover {
-        background-color: #58257b;
-      }
-
+      .button:hover { background-color: #58257b; }
       .button:active {
         background-color: #58257b;
         box-shadow: 0 5px #666;
@@ -54,10 +42,10 @@
       </p>
     </div>
 
-    <input class="input is-normal input-name is-fullwidth" placeholder="Nameー名前" id="Name">
-    <input class="input is-normal input-ws is-fullwidth" placeholder="半製品－完成品" id="WS">
-    <input class="input is-normal input-number" placeholder="Number-数量" id="Number-code" type="number" pattern="\d*">
-    <input class="input is-rounded is-large input-code is-fullwidth" placeholder="Codeー図面コード" id="code">
+    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id="WS">
+    <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code" type="number" pattern="\d* >
+    <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code">
 
     <button class="button is-info is-fullwidth" onclick="sendData()">Save-保存</button>
     <div style="width: 800px; margin: 0 auto;" id="reader"></div>
@@ -73,113 +61,75 @@
     <script>
       function ChangeName() {
         document.querySelector('.input-name').value = '';
-        document.getElementById('Name').focus();
+        document.getElementById("Name").focus();
       }
 
       function ChangeWS() {
         document.querySelector('.input-ws').value = '';
-        document.getElementById('WS').focus();
+        document.getElementById("WS").focus();
       }
 
       function ChangeCode() {
         document.querySelector('.input-code').value = '';
-        document.getElementById('code').focus();
+        document.getElementById("code").focus();
       }
 
       function IsEmpty() {
-        if (document.querySelector('.input-ws').value === '') {
-          alert('半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm');
+        if (document.querySelector('.input-ws').value === "") {
+          alert("半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm");
           return false;
         }
         return true;
       }
 
-      function resetInputs() {
-        document.querySelector('.input-code').value = '';
-        document.querySelector('.input-number').value = '';
-        document.getElementById('code').focus();
-      }
-
       function sendData() {
-            if (!IsEmpty()) return;
-            if (document.querySelector('.input-code').value === "") {
-                alert("QRコードを入力してください-Hãy nhập mã hàng");
-                return false;
-            }
-            const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec";
-            const options = {
-                method: 'POST',
-                contentType: 'application/json',
-                body: JSON.stringify({
-                    name: document.querySelector('.input-name').value,
-                    ws: document.querySelector('.input-ws').value,
-                    Number: document.querySelector('.input-Number').value,
-                    NG: document.querySelector('.input-NG').value,
-                    class: document.querySelector('.input-code').value
-                })
-            };
+        if (!IsEmpty()) return;
+        if (document.querySelector('.input-code').value === "") {
+          alert("QRコードを入力してください-Hãy nhập mã hàng");
+          return false;
+        }
 
-        const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec"; // Thay YOUR_SCRIPT_ID bằng ID script của bạn
+        const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec";
         const options = {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          contentType: 'application/json',
           body: JSON.stringify({
-            name,
-            ws,
-            number,
-            code
-          }),
+            name: document.querySelector('.input-name').value,
+            ws: document.querySelector('.input-ws').value,
+            Number: document.querySelector('.input-Number').value,
+            class: document.querySelector('.input-code').value + "$"
+          })
         };
 
         fetch(API_URL, options)
           .then(response => response.json())
-          .then(data => {
-            console.log("Dữ liệu đã gửi:", data);
-            resetInputs();
-          })
-          .catch(err => {
-            console.error("Lỗi khi gửi dữ liệu:", err);
-            alert("Lỗi khi gửi dữ liệu. Vui lòng thử lại!");
-          });
+          .then(data => console.log(data));
 
+        document.querySelector('.input-code').value = '';
+        document.querySelector('.input-Number').value = '';
+        document.getElementById("code").focus();
         play();
       }
 
-      const config = { fps: 10, qrbox: 250 };
+      const config = { fps: 5, qrbox: 450 };
       let html5QrCode;
-
-      function qrCodeSuccessCallback(message) {
-        document.querySelector('.input-code').value = message;
-        html5QrCode.stop();
-        document.getElementById('Number-code').focus();
-      }
 
       function play() {
         var audio = new Audio('https://media.geeksforgeeks.org/wp-content/uploads/20190531135120/beep.mp3');
         audio.play();
       }
 
-      function startScan() {
-        document.getElementById('reader').innerHTML = '';
+      function onScanSuccess(qrCodeMessage) {
+        document.getElementById("code").value = qrCodeMessage;
+        play();
+        html5QrCode.stop();
+      }
 
-        try {
-          html5QrCode = new Html5Qrcode('reader');
-          html5QrCode
-            .start(
-              { facingMode: "environment" }, // Camera sau
-              config,
-              qrCodeSuccessCallback
-            )
-            .catch(err => {
-              console.error("Lỗi camera:", err);
-              alert("Không thể mở camera. Vui lòng kiểm tra quyền truy cập hoặc sử dụng HTTPS.");
-            });
-        } catch (err) {
-          console.error("Lỗi khởi động QR scanner:", err);
-          alert("Không thể khởi động trình quét. Vui lòng kiểm tra lại.");
-        }
+      function startScan() {
+        if (!IsEmpty()) return;
+        document.getElementById('reader').innerHTML = '';
+        html5QrCode = new Html5Qrcode('reader');
+        html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess);
       }
 
       startScan();
