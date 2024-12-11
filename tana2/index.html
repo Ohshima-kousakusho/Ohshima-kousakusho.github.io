@@ -27,6 +27,31 @@
         box-shadow: 0 3px #666;
         transform: translateY(2px);
       }
+      .button.is-fullwidth {
+        font-size: 24px;
+        padding: 15px 30px;
+        margin-top: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+      }
+      th {
+        background-color: #f2f2f2;
+        text-align: left;
+      }
+      td.code-column {
+        width: 70%; /* Set the Code column width */
+      }
+      .table-container {
+        max-height: 300px; /* Adjust this height as needed */
+        overflow-y: auto;
+        margin-top: 20px;
+      }
       #reader {
         width: 100%;
         max-width: 400px;
@@ -35,25 +60,58 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <section class="hero is-small is-primary">
+    <div class="field is-grouped">
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
+      </p>
+      <p class="control">
+        <button class="button is-success" onclick="ChangeWS()">半－完成品</button>
+      </p>
+      <p class="control">
+        <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
+      </p>
+      <p class="control">
+        <button class="button is-primary" onclick="sendSavedData()">データ送信</button>
+      </p>
+    </div>
+
+    <input class="input is-normal input-name is fullwidth" placeholder="Nameー名前" id="Name">
+    <input class="input is-normal input-ws is fullwidth" placeholder="半製品－完成品" id="WS">
+    <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code" type="text">
+    <input class="input is-normal is-large input-Number" placeholder="Number-数量" id="Number-code" type="number" inputmode="numeric">
+
+    <div id="reader"></div>
+
+    <button class="button is-info is-fullwidth" onclick="saveAndStoreInput()">Save-保存</button>
+  
+    <div class="container is-fluid">
+      <section class="hero is-small  is-primary">
         <div class="hero-body">
           <p class="title">
-            大島工作所 - 棚卸 - QR Code Scanner
+            大島工作所-棚卸-CHỈ DÙNG ĐỂ KIỂM KHO
           </p>
-        </div>
-      </section>
+        </div> 
+      </section>      
+    </div>
 
-      <div id="reader"></div>
-
-      <input class="input is-rounded is-large input-code" placeholder="Code - 図面コード" id="code" type="text" readonly>
-
-      <button class="button is-info is-fullwidth" onclick="saveScannedCode()">Save - 保存</button>
+    <!-- Container to allow scrolling -->
+    <div class="table-container">
+      <!-- Table to display saved items -->
+      <table id="savedDataTable">
+        <thead>
+          <tr>
+            <th class="code-column">Code</th>
+            <th>Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be added dynamically here -->
+        </tbody>
+      </table>
     </div>
 
     <script>
-      // Tự động khởi chạy quét mã QR khi tải trang
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         startQRScanner();
       });
 
@@ -82,16 +140,132 @@
         });
       }
 
-      function saveScannedCode() {
-        const code = document.querySelector('.input-code').value;
-        if (!code) {
-          alert("No QR code detected!");
-          return;
-        }
-
-        alert(`Code saved: ${code}`);
-        // Xử lý logic lưu mã QR nếu cần
+      function ChangeName() {
+        document.querySelector('.input-name').value = '';
+        document.getElementById("Name").focus();
       }
+
+      function ChangeWS() {
+        document.querySelector('.input-ws').value = '';
+        document.getElementById("WS").focus();
+      }
+
+      function ChangeCode() {
+        document.querySelector('.input-code').value = '';
+        document.getElementById("code").focus();
+      }
+
+      function IsEmpty() {
+        if (document.querySelector('.input-code').value === "") {
+          alert("QRコードを入力してください-Hãy nhập mã hàng");
+          return false;
+        }
+        return true;
+      }
+
+      function saveAndStoreInput() {
+        if (!IsEmpty()) return;
+
+        let data = {
+          name: document.querySelector('.input-name').value,
+          ws: document.querySelector('.input-ws').value,
+          class: document.querySelector('.input-code').value + "$",  // Appending $ to the entire string
+          Number: document.querySelector('.input-Number').value
+        };
+
+        // Lấy dữ liệu đã lưu trong localStorage
+        let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
+        savedData.push(data);
+        localStorage.setItem('unsentData', JSON.stringify(savedData));
+
+        // Cập nhật bảng với dữ liệu mới
+        updateTable(data);
+
+        // Xóa input fields sau khi lưu
+        document.querySelector('.input-code').value = '';
+        document.querySelector('.input-Number').value = '';
+        document.getElementById("code").focus();
+      }
+
+      function updateTable(data) {
+        const tableBody = document.querySelector("#savedDataTable tbody");
+        const newRow = document.createElement("tr");
+
+        newRow.innerHTML = `
+          <td class="code-column">${data.class}</td>
+          <td>${data.Number}</td>
+        `;
+
+        // Thêm hàng mới vào đầu bảng
+        tableBody.insertBefore(newRow, tableBody.firstChild);
+      }
+
+      async function sendSavedData() {
+        let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
+        if (savedData.length > 0) {
+          alert("Transferring data to Google Sheets...");
+          
+          const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
+
+          for (let i = 0; i < savedData.length; i++) {
+            const data = savedData[i];
+            const options = {
+              method: 'POST',
+              contentType: 'application/json',
+              body: JSON.stringify(data)
+            };
+
+            try {
+              const response = await fetch(API_URL, options);
+              if (response.ok) {
+                // Xóa dữ liệu đã gửi thành công khỏi localStorage
+                savedData.splice(i, 1);
+                localStorage.setItem('unsentData', JSON.stringify(savedData));
+                removeTableRow(i); // Xóa hàng khỏi giao diện
+                i--; // Điều chỉnh lại chỉ số sau khi xóa
+              } else {
+                console.error('Error:', response.statusText);
+              }
+            } catch (err) {
+              console.error('Error:', err);
+              break; // Thử lại sau nếu có lỗi
+            }
+          }
+          
+          if (savedData.length === 0) {
+            alert("All data has been successfully transferred.");
+          }
+        } else {
+          alert("No data to send!");
+        }
+      }
+
+      function removeTableRow(index) {
+        const tableBody = document.querySelector("#savedDataTable tbody");
+        tableBody.deleteRow(index);
+      }
+
+      // Kiểm tra và gửi dữ liệu khi kết nối mạng trở lại
+      window.addEventListener('online', sendSavedData);
+      
+      // Nhấn Enter để xuống dòng
+      document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('input');
+
+        inputs.forEach((input, index) => {
+          input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+              event.preventDefault(); // Ngăn hành động mặc định của Enter
+              const nextInput = inputs[index + 1]; // Chọn input tiếp theo
+              if (nextInput) {
+                nextInput.focus(); // Di chuyển tiêu điểm tới input tiếp theo
+              } else {
+                document.querySelector('.button.is-info').focus(); // Di chuyển đến nút Save nếu không còn input nào
+              }
+            }
+          });
+        });
+      });
     </script>
   </body>
 </html>
