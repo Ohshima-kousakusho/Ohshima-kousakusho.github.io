@@ -45,10 +45,10 @@
         text-align: left;
       }
       td.code-column {
-        width: 70%; /* Set the Code column width */
+        width: 70%;
       }
       .table-container {
-        max-height: 300px; /* Adjust this height as needed */
+        max-height: 300px;
         overflow-y: auto;
         margin-top: 20px;
       }
@@ -94,9 +94,7 @@
       </section>      
     </div>
 
-    <!-- Container to allow scrolling -->
     <div class="table-container">
-      <!-- Table to display saved items -->
       <table id="savedDataTable">
         <thead>
           <tr>
@@ -105,7 +103,6 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Rows will be added dynamically here -->
         </tbody>
       </table>
     </div>
@@ -119,20 +116,18 @@
         const qrCodeReader = new Html5Qrcode("reader");
 
         qrCodeReader.start(
-          { facingMode: "environment" }, // Sử dụng camera sau
+          { facingMode: "environment" },
           {
-            fps: 10, // Tốc độ quét
-            qrbox: 250 // Kích thước vùng quét
+            fps: 10,
+            qrbox: 250
           },
           (decodedText, decodedResult) => {
-            // Ghi mã QR vào input và dừng quét
             qrCodeReader.stop().then(() => {
               console.log("QR Code detected:", decodedText);
               document.querySelector('.input-code').value = decodedText;
             }).catch(err => console.error("Error stopping scanner:", err));
           },
           (errorMessage) => {
-            // Xử lý lỗi hoặc thông báo khi không quét được mã QR
             console.warn(`QR Code scanning error: ${errorMessage}`);
           }
         ).catch(err => {
@@ -169,19 +164,16 @@
         let data = {
           name: document.querySelector('.input-name').value,
           ws: document.querySelector('.input-ws').value,
-          class: document.querySelector('.input-code').value + "$",  // Appending $ to the entire string
+          class: document.querySelector('.input-code').value + "$",
           Number: document.querySelector('.input-Number').value
         };
 
-        // Lấy dữ liệu đã lưu trong localStorage
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         savedData.push(data);
         localStorage.setItem('unsentData', JSON.stringify(savedData));
 
-        // Cập nhật bảng với dữ liệu mới
         updateTable(data);
 
-        // Xóa input fields sau khi lưu
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.getElementById("code").focus();
@@ -196,7 +188,6 @@
           <td>${data.Number}</td>
         `;
 
-        // Thêm hàng mới vào đầu bảng
         tableBody.insertBefore(newRow, tableBody.firstChild);
       }
 
@@ -218,17 +209,16 @@
             try {
               const response = await fetch(API_URL, options);
               if (response.ok) {
-                // Xóa dữ liệu đã gửi thành công khỏi localStorage
                 savedData.splice(i, 1);
                 localStorage.setItem('unsentData', JSON.stringify(savedData));
-                removeTableRow(i); // Xóa hàng khỏi giao diện
-                i--; // Điều chỉnh lại chỉ số sau khi xóa
+                removeTableRow(i);
+                i--;
               } else {
                 console.error('Error:', response.statusText);
               }
             } catch (err) {
               console.error('Error:', err);
-              break; // Thử lại sau nếu có lỗi
+              break;
             }
           }
           
@@ -245,22 +235,20 @@
         tableBody.deleteRow(index);
       }
 
-      // Kiểm tra và gửi dữ liệu khi kết nối mạng trở lại
       window.addEventListener('online', sendSavedData);
       
-      // Nhấn Enter để xuống dòng
       document.addEventListener('DOMContentLoaded', function () {
         const inputs = document.querySelectorAll('input');
 
         inputs.forEach((input, index) => {
           input.addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
-              event.preventDefault(); // Ngăn hành động mặc định của Enter
-              const nextInput = inputs[index + 1]; // Chọn input tiếp theo
+              event.preventDefault();
+              const nextInput = inputs[index + 1];
               if (nextInput) {
-                nextInput.focus(); // Di chuyển tiêu điểm tới input tiếp theo
+                nextInput.focus();
               } else {
-                document.querySelector('.button.is-info').focus(); // Di chuyển đến nút Save nếu không còn input nào
+                document.querySelector('.button.is-info').focus();
               }
             }
           });
