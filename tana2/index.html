@@ -3,13 +3,14 @@
   <head>
     <base target="_top">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <style>
       input:focus { background: yellow; color: blue; }
       button:focus { background: pink; color: blue; }
       .button {
         display: inline-block;
-        padding: 15px 30px;
-        font-size: 30px;
+        padding: 10px 20px;
+        font-size: 18px;
         cursor: pointer;
         text-align: center;
         text-decoration: none;
@@ -17,134 +18,80 @@
         color: #fff;
         background-color: purple;
         border: none;
-        border-radius: 15px;
-        box-shadow: 0 9px #999;
+        border-radius: 10px;
+        box-shadow: 0 5px #999;
       }
       .button:hover { background-color: #58257b; }
       .button:active {
         background-color: #58257b;
-        box-shadow: 0 5px #666;
-        transform: translateY(4px);
+        box-shadow: 0 3px #666;
+        transform: translateY(2px);
+      }
+      #reader {
+        width: 100%;
+        max-width: 400px;
+        margin: 20px auto;
       }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
   <body>
-    <div class="field is-grouped">
-      <p class="control">
-        <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
-      </p>
-      <p class="control">
-        <button class="button is-success" onclick="ChangeWS()">半－完成品</button>
-      </p>
-      <p class="control">
-        <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
-      </p>
-    </div>
-
-    <input class="input is-normal input-name is-fullwidth" placeholder="Nameー名前" id="Name">
-    <input class="input is-normal input-ws is-fullwidth" placeholder="半製品－完成品" id="WS">
-    <input class="input is-normal is-warning input-Number" placeholder="Number-数量" id="Number-code" type="number" pattern="\d*">
-    <input class="input is-rounded is-large input-code is-fullwidth" placeholder="Codeー図面コード" id="code">
-
-    <button class="button is-info is-fullwidth" onclick="sendData()">Save-保存</button>
-    <div style="width: 800px; margin: 0 auto;" id="reader"></div>
-
-    <div class="container is-fluid">
+    <div class="container">
       <section class="hero is-small is-primary">
         <div class="hero-body">
-          <p class="title">大島工作所-棚卸-CHỈ DÙNG ĐỂ KIỂM KHO</p>
+          <p class="title">
+            大島工作所 - 棚卸 - QR Code Scanner
+          </p>
         </div>
       </section>
+
+      <div id="reader"></div>
+
+      <input class="input is-rounded is-large input-code" placeholder="Code - 図面コード" id="code" type="text" readonly>
+
+      <button class="button is-info is-fullwidth" onclick="saveScannedCode()">Save - 保存</button>
     </div>
 
     <script>
-      function ChangeName() {
-        document.querySelector('.input-name').value = '';
-        document.getElementById("Name").focus();
+      // Tự động khởi chạy quét mã QR khi tải trang
+      document.addEventListener('DOMContentLoaded', function() {
+        startQRScanner();
+      });
+
+      function startQRScanner() {
+        const qrCodeReader = new Html5Qrcode("reader");
+
+        qrCodeReader.start(
+          { facingMode: "environment" }, // Sử dụng camera sau
+          {
+            fps: 10, // Tốc độ quét
+            qrbox: 250 // Kích thước vùng quét
+          },
+          (decodedText, decodedResult) => {
+            // Ghi mã QR vào input và dừng quét
+            qrCodeReader.stop().then(() => {
+              console.log("QR Code detected:", decodedText);
+              document.querySelector('.input-code').value = decodedText;
+            }).catch(err => console.error("Error stopping scanner:", err));
+          },
+          (errorMessage) => {
+            // Xử lý lỗi hoặc thông báo khi không quét được mã QR
+            console.warn(`QR Code scanning error: ${errorMessage}`);
+          }
+        ).catch(err => {
+          console.error("Error starting QR scanner:", err);
+        });
       }
 
-      function ChangeWS() {
-        document.querySelector('.input-ws').value = '';
-        document.getElementById("WS").focus();
-      }
-
-      function ChangeCode() {
-        document.querySelector('.input-code').value = '';
-        document.getElementById("code").focus();
-      }
-
-      function IsEmpty() {
-        if (document.querySelector('.input-ws').value === "") {
-          alert("半製品か－完成品か-Hãy xác nhận là bán thành phẩm hay thành phẩm");
-          return false;
+      function saveScannedCode() {
+        const code = document.querySelector('.input-code').value;
+        if (!code) {
+          alert("No QR code detected!");
+          return;
         }
-        return true;
+
+        alert(`Code saved: ${code}`);
+        // Xử lý logic lưu mã QR nếu cần
       }
-
-      function sendData() {
-        if (!IsEmpty()) return;
-        if (document.querySelector('.input-code').value === "") {
-          alert("QRコードを入力してください-Hãy nhập mã hàng");
-          return false;
-        }
-
-        const API_URL = "https://script.google.com/macros/s/AKfycbwIf9yCIeHeP6e2AqObN9NUQxDq9MnQFq8KvFCSb2ZQay0ZbFL3hkvON8-JkHAHt0eo/exec"; // Thay bằng URL thực của bạn
-        const options = {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: document.querySelector('.input-name').value,
-            ws: document.querySelector('.input-ws').value,
-            Number: document.querySelector('.input-Number').value,
-            class: document.querySelector('.input-code').value + "$"
-          })
-        };
-
-        fetch(API_URL, options)
-          .then(response => response.json())
-          .then(data => console.log(data))
-          .catch(err => console.error("Error:", err));
-
-        document.querySelector('.input-code').value = '';
-        document.querySelector('.input-Number').value = '';
-        document.getElementById("code").focus();
-      }
-
-      const config = { fps: 10, qrbox: 250 };
-
-      function onScanSuccess(qrCodeMessage) {
-        document.getElementById("code").value = qrCodeMessage;
-        html5QrCode.stop(); // Dừng camera sau khi quét thành công
-      }
-
-      function startScan() {
-        document.getElementById('reader').innerHTML = '';
-
-        try {
-          navigator.mediaDevices.getUserMedia({ video: true }) // Kiểm tra quyền camera
-            .then(stream => {
-              html5QrCode = new Html5QrCode('reader');
-              html5QrCode.start(
-                { facingMode: "environment" }, // Sử dụng camera sau
-                config,
-                onScanSuccess
-              ).catch(err => {
-                console.error("Lỗi khi khởi động QR scanner:", err);
-                alert("Không thể mở camera. Kiểm tra quyền truy cập hoặc HTTPS.");
-              });
-            })
-            .catch(err => {
-              console.error("Camera access denied:", err);
-              alert("Vui lòng cấp quyền truy cập camera để tiếp tục.");
-            });
-        } catch (err) {
-          console.error("Error initializing camera:", err);
-          alert("Không thể khởi động trình quét QR.");
-        }
-      }
-
-      startScan();
     </script>
   </body>
 </html>
