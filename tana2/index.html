@@ -86,7 +86,6 @@
     <input class="input is-normal is-large input-Number" placeholder="Number-数量" id="Number-code" type="number" inputmode="numeric">
 
     <button class="button is-info is-fullwidth" onclick="saveAndStoreInput()">Save-保存</button>
-    <button class="button is-danger is-fullwidth" onclick="toggleTable()">Toggle Table</button>
   
     <div class="container is-fluid">
       <section class="hero is-small  is-primary">
@@ -240,15 +239,6 @@
       function removeTableRow(index) {
         const tableBody = document.querySelector("#savedDataTable tbody");
         tableBody.deleteRow(index);
-      }
-
-      function toggleTable() {
-        const tableContainer = document.getElementById("table-container");
-        if (tableContainer.style.display === "none") {
-          tableContainer.style.display = "block";
-        } else {
-          tableContainer.style.display = "none";
-        }
       }
 
       window.addEventListener('online', sendSavedData);
