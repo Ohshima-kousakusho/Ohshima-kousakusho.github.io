@@ -44,7 +44,7 @@
         text-align: left;
       }
       td.code-column {
-        width: 50%;
+        width: 70%;
       }
       .table-container {
         max-height: 300px;
@@ -60,20 +60,15 @@
         border: 2px solid black;
         padding: 10px;
       }
-      .button-group {
-        margin-top: 20px;
-        display: flex;
-        justify-content: flex-start;
-      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
   <body>
     <div class="camera-container">
-      <div id="reader" style="margin-left: auto; margin-right: auto;"></div>
+      <div id="reader" style="float: left;"></div>
     </div>
 
-    <div class="button-group">
+    <div class="field is-grouped">
       <p class="control">
         <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
       </p>
