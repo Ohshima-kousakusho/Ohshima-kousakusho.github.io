@@ -44,7 +44,7 @@
         text-align: left;
       }
       td.code-column {
-        width: 70%;
+        width: 50%;
       }
       .table-container {
         max-height: 300px;
@@ -60,6 +60,11 @@
         border: 2px solid black;
         padding: 10px;
       }
+      .button-group {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-start;
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
@@ -68,7 +73,7 @@
       <div id="reader" style="margin-left: auto; margin-right: auto;"></div>
     </div>
 
-    <div class="field is-grouped" style="margin-top: 20px; display: flex; justify-content: center;">
+    <div class="button-group">
       <p class="control">
         <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
       </p>
@@ -178,7 +183,7 @@
         }
 
         if (inputNumber === "" || inputNumber <= 0) {
-          alert("数量を入力してください-Hãy nhập số lượng");
+          alert("数量を入力してください-Hãy nhập số lượng hợp lệ");
           return false;
         }
 
