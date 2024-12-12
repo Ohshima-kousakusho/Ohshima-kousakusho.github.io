@@ -44,16 +44,30 @@
         text-align: left;
       }
       td.code-column {
-        width: 70%; /* Set the Code column width */
+        width: 70%;
       }
       .table-container {
-        max-height: 300px; /* Adjust this height as needed */
+        max-height: 300px;
         overflow-y: auto;
         margin-top: 20px;
       }
+      #reader {
+        width: 100%;
+        max-width: 350px;
+        margin: 20px 0;
+        margin-left: auto;
+        margin-right: auto;
+        border: 2px solid black;
+        padding: 10px;
+      }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
   <body>
+    <div class="camera-container">
+      <div id="reader" style="float: left;"></div>
+    </div>
+
     <div class="field is-grouped">
       <p class="control">
         <button class="button is-warning" onclick="ChangeName()">名前-NAME</button>
@@ -74,7 +88,6 @@
     <input class="input is-rounded is-large input-code is fullwidth" placeholder="Codeー図面コード" id="code" type="text">
     <input class="input is-normal is-large input-Number" placeholder="Number-数量" id="Number-code" type="number" inputmode="numeric">
 
-  
     <button class="button is-info is-fullwidth" onclick="saveAndStoreInput()">Save-保存</button>
   
     <div class="container is-fluid">
@@ -87,9 +100,7 @@
       </section>      
     </div>
 
-    <!-- Container to allow scrolling -->
-    <div class="table-container">
-      <!-- Table to display saved items -->
+    <div class="table-container" id="table-container">
       <table id="savedDataTable">
         <thead>
           <tr>
@@ -98,12 +109,44 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Rows will be added dynamically here -->
         </tbody>
       </table>
     </div>
 
     <script>
+      let html5QrCode;
+
+      document.addEventListener('DOMContentLoaded', function () {
+        startQRScanner();
+      });
+
+      function startQRScanner() {
+        if (!html5QrCode) {
+          html5QrCode = new Html5Qrcode("reader");
+        }
+        html5QrCode.start(
+          { facingMode: "environment" },
+          {
+            fps: 10,
+            qrbox: 250
+          },
+          (decodedText, decodedResult) => {
+            const inputCode = document.querySelector('.input-code');
+            inputCode.value = decodedText;
+
+            // Tự động chuyển focus sang input Number
+            document.getElementById("Number-code").focus();
+
+            html5QrCode.stop();
+          },
+          (errorMessage) => {
+            console.warn(`QR Code scanning error: ${errorMessage}`);
+          }
+        ).catch(err => {
+          console.error("Error starting QR scanner:", err);
+        });
+      }
+
       function ChangeName() {
         document.querySelector('.input-name').value = '';
         document.getElementById("Name").focus();
@@ -120,10 +163,25 @@
       }
 
       function IsEmpty() {
-        if (document.querySelector('.input-code').value === "") {
+        const inputCode = document.querySelector('.input-code').value;
+        const inputWS = document.querySelector('.input-ws').value;
+        const inputNumber = document.querySelector('.input-Number').value;
+
+        if (inputCode === "") {
           alert("QRコードを入力してください-Hãy nhập mã hàng");
           return false;
         }
+
+        if (inputWS === "") {
+          alert("半製品－完成品を入力してください-Hãy nhập thông tin 半製品－完成品");
+          return false;
+        }
+
+        if (inputNumber === "" || inputNumber <= 0) {
+          alert("数量を入力してください-Hãy nhập số lượng");
+          return false;
+        }
+
         return true;
       }
 
@@ -133,22 +191,23 @@
         let data = {
           name: document.querySelector('.input-name').value,
           ws: document.querySelector('.input-ws').value,
-          class: document.querySelector('.input-code').value + "$",  // Appending $ to the entire string
+          class: document.querySelector('.input-code').value + "$",
           Number: document.querySelector('.input-Number').value
         };
 
-        // Lấy dữ liệu đã lưu trong localStorage
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
+
+        // Allow duplicate entries
         savedData.push(data);
         localStorage.setItem('unsentData', JSON.stringify(savedData));
 
-        // Cập nhật bảng với dữ liệu mới
         updateTable(data);
 
-        // Xóa input fields sau khi lưu
         document.querySelector('.input-code').value = '';
         document.querySelector('.input-Number').value = '';
         document.getElementById("code").focus();
+
+        startQRScanner(); // Restart scanner after saving data
       }
 
       function updateTable(data) {
@@ -160,7 +219,6 @@
           <td>${data.Number}</td>
         `;
 
-        // Thêm hàng mới vào đầu bảng
         tableBody.insertBefore(newRow, tableBody.firstChild);
       }
 
@@ -182,17 +240,16 @@
             try {
               const response = await fetch(API_URL, options);
               if (response.ok) {
-                // Xóa dữ liệu đã gửi thành công khỏi localStorage
                 savedData.splice(i, 1);
                 localStorage.setItem('unsentData', JSON.stringify(savedData));
-                removeTableRow(i); // Xóa hàng khỏi giao diện
-                i--; // Điều chỉnh lại chỉ số sau khi xóa
+                removeTableRow(i);
+                i--;
               } else {
                 console.error('Error:', response.statusText);
               }
             } catch (err) {
               console.error('Error:', err);
-              break; // Thử lại sau nếu có lỗi
+              break;
             }
           }
           
@@ -209,27 +266,25 @@
         tableBody.deleteRow(index);
       }
 
-      // Kiểm tra và gửi dữ liệu khi kết nối mạng trở lại
       window.addEventListener('online', sendSavedData);
-      
-      // Nhấn Enter để xuống dòng
-      document.addEventListener('DOMContentLoaded', function () {
-    const inputs = document.querySelectorAll('input');
 
-    inputs.forEach((input, index) => {
-      input.addEventListener('keydown', function (event) {
-        if (event.key === 'Enter') {
-          event.preventDefault(); // Ngăn hành động mặc định của Enter
-          const nextInput = inputs[index + 1]; // Chọn input tiếp theo
-          if (nextInput) {
-            nextInput.focus(); // Di chuyển tiêu điểm tới input tiếp theo
-          } else {
-            document.querySelector('.button.is-info').focus(); // Di chuyển đến nút Save nếu không còn input nào
-          }
-        }
+      document.addEventListener('DOMContentLoaded', function () {
+        const inputs = document.querySelectorAll('input');
+
+        inputs.forEach((input, index) => {
+          input.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              const nextInput = inputs[index + 1];
+              if (nextInput) {
+                nextInput.focus();
+              } else {
+                document.querySelector('.button.is-info').focus();
+              }
+            }
+          });
+        });
       });
-    });
-  });
     </script>
   </body>
 </html>
