@@ -127,7 +127,12 @@
             qrbox: 250
           },
           (decodedText, decodedResult) => {
-            document.querySelector('.input-code').value = decodedText;
+            const inputCode = document.querySelector('.input-code');
+            inputCode.value = decodedText;
+
+            // Tự động chuyển focus sang input Number
+            document.getElementById("Number-code").focus();
+
             html5QrCode.stop();
           },
           (errorMessage) => {
