@@ -159,10 +159,19 @@
       }
 
       function IsEmpty() {
-        if (document.querySelector('.input-code').value === "") {
+        const inputCode = document.querySelector('.input-code').value;
+        const inputWS = document.querySelector('.input-ws').value;
+
+        if (inputCode === "") {
           alert("QRコードを入力してください-Hãy nhập mã hàng");
           return false;
         }
+
+        if (inputWS === "") {
+          alert("A か　Bを入力してください-Hãy nhập thông tin A hay B);
+          return false;
+        }
+
         return true;
       }
 
