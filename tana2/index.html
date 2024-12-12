@@ -161,6 +161,7 @@
       function IsEmpty() {
         const inputCode = document.querySelector('.input-code').value;
         const inputWS = document.querySelector('.input-ws').value;
+        const inputNumber = document.querySelector('.input-Number').value;
 
         if (inputCode === "") {
           alert("QRコードを入力してください-Hãy nhập mã hàng");
@@ -169,6 +170,11 @@
 
         if (inputWS === "") {
           alert("半製品－完成品を入力してください-Hãy nhập thông tin 半製品－完成品");
+          return false;
+        }
+
+        if (inputNumber === "" || inputNumber <= 0) {
+          alert("数量を入力してください-Hãy nhập số lượng ");
           return false;
         }
 
@@ -256,25 +262,4 @@
         tableBody.deleteRow(index);
       }
 
-      window.addEventListener('online', sendSavedData);
-
-      document.addEventListener('DOMContentLoaded', function () {
-        const inputs = document.querySelectorAll('input');
-
-        inputs.forEach((input, index) => {
-          input.addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              const nextInput = inputs[index + 1];
-              if (nextInput) {
-                nextInput.focus();
-              } else {
-                document.querySelector('.button.is-info').focus();
-              }
-            }
-          });
-        });
-      });
-    </script>
-  </body>
-</html>
+      window.addEvent
