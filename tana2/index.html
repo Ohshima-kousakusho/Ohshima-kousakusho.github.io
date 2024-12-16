@@ -126,19 +126,16 @@
           (decodedText) => {
             document.querySelector('.input-code').value = decodedText;
             document.getElementById("Number-code").focus();
-            html5QrCode.stop();
           },
           (errorMessage) => {
             console.warn(`QR Code scanning error: ${errorMessage}`);
           }
-        ).then((stream) => {
-          const track = stream.getVideoTracks()[0];
-          const capabilities = track.getCapabilities();
-          if (capabilities.torch) {
-            track.applyConstraints({
-              advanced: [{ torch: true }]
-            }).catch(err => console.error("Torch error:", err));
-          }
+        ).then(() => {
+          const videoElement = document.querySelector("video");
+          const track = videoElement.srcObject.getVideoTracks()[0];
+          track.applyConstraints({ advanced: [{ torch: true }] }).catch(err => {
+            console.error("Torch could not be enabled:", err);
+          });
         }).catch(err => console.error("QR Scanner error:", err));
       }
 
