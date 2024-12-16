@@ -213,7 +213,7 @@
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         if (savedData.length > 0) {
           alert("Transferring data to Google Sheets...");
-          const API_URL = "YOUR_API_URL_HERE";
+          const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
           for (let i = 0; i < savedData.length; i++) {
             const data = savedData[i];
