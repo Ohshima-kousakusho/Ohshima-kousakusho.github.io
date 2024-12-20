@@ -252,48 +252,32 @@
 
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
-          for (let i = 0; i < savedData.length; i++) {
-            const data = savedData[i];
+          try {
             const options = {
               method: 'POST',
               contentType: 'application/json',
-              body: JSON.stringify(data)
+              body: JSON.stringify(savedData)
             };
 
-            try {
-              const response = await fetch(API_URL, options);
-              if (response.ok) {
-                savedData.splice(i, 1);
-                localStorage.setItem('unsentData', JSON.stringify(savedData));
-                removeTableRow(i);
-                i--;
-
-                // Update progress bar
-                progressBar.style.width = `${((savedData.length - i) / savedData.length) * 100}%`;
-              } else {
-                console.error('Error:', response.statusText);
-              }
-            } catch (err) {
-              console.error('Error:', err);
-              break;
+            const response = await fetch(API_URL, options);
+            if (response.ok) {
+              localStorage.removeItem('unsentData'); // Clear data after successful transfer
+              document.querySelector("#savedDataTable tbody").innerHTML = ''; // Clear table
+              progressBar.style.width = '100%';
+              alert("All data has been successfully transferred.すべてのデータが正常に転送されました");
+            } else {
+              console.error('Error:', response.statusText);
             }
+          } catch (err) {
+            console.error('Error:', err);
           }
 
           progressContainer.style.display = 'none';
-
-          if (savedData.length === 0) {
-            alert("All data has been successfully transferred.すべてのデータが正常に転送されました");
-          }
         } else {
           alert("No data to send!送信するデータがありません！");
         }
 
         isSending = false; // Reset sending status
-      }
-
-      function removeTableRow(index) {
-        const tableBody = document.querySelector("#savedDataTable tbody");
-        tableBody.deleteRow(index);
       }
 
       window.addEventListener('online', sendSavedData);
