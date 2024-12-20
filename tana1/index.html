@@ -60,6 +60,16 @@
         border: 2px solid black;
         padding: 10px;
       }
+      #progress-container {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+      #progress-bar {
+        width: 0;
+        height: 20px;
+        background-color: green;
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
@@ -79,7 +89,7 @@
         <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
       </p>
       <p class="control">
-        <button class="button is-primary" onclick="sendSavedData()">データ送信</button>
+        <button class="button is-primary" id="sendButton" onclick="sendSavedData()">データ送信</button>
       </p>
     </div>
 
@@ -113,8 +123,14 @@
       </table>
     </div>
 
+    <div id="progress-container">
+      <div>Transferring data to Google Sheets...</div>
+      <div id="progress-bar"></div>
+    </div>
+
     <script>
       let html5QrCode;
+      let isSending = false; // Variable to track if data is being sent
 
       document.addEventListener('DOMContentLoaded', function () {
         startQRScanner();
@@ -223,47 +239,50 @@
       }
 
       async function sendSavedData() {
+        if (isSending) return; // Prevent duplicate requests
+        isSending = true;
+
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         if (savedData.length > 0) {
-          alert("Transferring data to Google Sheets...");
-          
+          const progressContainer = document.getElementById('progress-container');
+          const progressBar = document.getElementById('progress-bar');
+
+          progressContainer.style.display = 'block';
+          progressBar.style.width = '0';
+
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
-          for (let i = 0; i < savedData.length; i++) {
-            const data = savedData[i];
-            const options = {
-              method: 'POST',
-              contentType: 'application/json',
-              body: JSON.stringify(data)
-            };
+          try {
+            const promises = savedData.map(async (data, index) => {
+              const options = {
+                method: 'POST',
+                contentType: 'application/json',
+                body: JSON.stringify(data)
+              };
 
-            try {
               const response = await fetch(API_URL, options);
               if (response.ok) {
-                savedData.splice(i, 1);
-                localStorage.setItem('unsentData', JSON.stringify(savedData));
-                removeTableRow(i);
-                i--;
+                progressBar.style.width = `${((index + 1) / savedData.length) * 100}%`;
               } else {
                 console.error('Error:', response.statusText);
               }
-            } catch (err) {
-              console.error('Error:', err);
-              break;
-            }
-          }
-          
-          if (savedData.length === 0) {
+            });
+
+            await Promise.all(promises);
+
+            localStorage.removeItem('unsentData'); // Clear data after successful transfer
+            document.querySelector("#savedDataTable tbody").innerHTML = ''; // Clear table
             alert("All data has been successfully transferred.すべてのデータが正常に転送されました");
+          } catch (err) {
+            console.error('Error:', err);
           }
+
+          progressContainer.style.display = 'none';
         } else {
           alert("No data to send!送信するデータがありません！");
         }
-      }
 
-      function removeTableRow(index) {
-        const tableBody = document.querySelector("#savedDataTable tbody");
-        tableBody.deleteRow(index);
+        isSending = false; // Reset sending status
       }
 
       window.addEventListener('online', sendSavedData);
@@ -278,8 +297,6 @@
               const nextInput = inputs[index + 1];
               if (nextInput) {
                 nextInput.focus();
-              } else {
-                document.querySelector('.button.is-info').focus();
               }
             }
           });
