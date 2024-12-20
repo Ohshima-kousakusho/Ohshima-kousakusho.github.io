@@ -253,21 +253,26 @@
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
           try {
-            const options = {
-              method: 'POST',
-              contentType: 'application/json',
-              body: JSON.stringify(savedData)
-            };
+            const promises = savedData.map(async (data, index) => {
+              const options = {
+                method: 'POST',
+                contentType: 'application/json',
+                body: JSON.stringify(data)
+              };
 
-            const response = await fetch(API_URL, options);
-            if (response.ok) {
-              localStorage.removeItem('unsentData'); // Clear data after successful transfer
-              document.querySelector("#savedDataTable tbody").innerHTML = ''; // Clear table
-              progressBar.style.width = '100%';
-              alert("All data has been successfully transferred.すべてのデータが正常に転送されました");
-            } else {
-              console.error('Error:', response.statusText);
-            }
+              const response = await fetch(API_URL, options);
+              if (response.ok) {
+                progressBar.style.width = `${((index + 1) / savedData.length) * 100}%`;
+              } else {
+                console.error('Error:', response.statusText);
+              }
+            });
+
+            await Promise.all(promises);
+
+            localStorage.removeItem('unsentData'); // Clear data after successful transfer
+            document.querySelector("#savedDataTable tbody").innerHTML = ''; // Clear table
+            alert("All data has been successfully transferred.すべてのデータが正常に転送されました");
           } catch (err) {
             console.error('Error:', err);
           }
