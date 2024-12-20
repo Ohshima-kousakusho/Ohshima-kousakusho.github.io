@@ -89,7 +89,7 @@
         <button class="button is-warning" onclick="ChangeCode()">QR-Code</button>
       </p>
       <p class="control">
-        <button class="button is-primary" onclick="sendSavedData()">データ送信</button>
+        <button class="button is-primary" id="sendButton" onclick="sendSavedData()">データ送信</button>
       </p>
     </div>
 
@@ -130,6 +130,7 @@
 
     <script>
       let html5QrCode;
+      let isSending = false; // Variable to track if data is being sent
 
       document.addEventListener('DOMContentLoaded', function () {
         startQRScanner();
@@ -238,6 +239,9 @@
       }
 
       async function sendSavedData() {
+        if (isSending) return; // Prevent duplicate requests
+        isSending = true;
+
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         if (savedData.length > 0) {
           const progressContainer = document.getElementById('progress-container');
@@ -283,6 +287,8 @@
         } else {
           alert("No data to send!送信するデータがありません！");
         }
+
+        isSending = false; // Reset sending status
       }
 
       function removeTableRow(index) {
