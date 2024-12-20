@@ -60,6 +60,16 @@
         border: 2px solid black;
         padding: 10px;
       }
+      #progress-container {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+      #progress-bar {
+        width: 0;
+        height: 20px;
+        background-color: green;
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.0.3/html5-qrcode.min.js"></script>
   </head>
@@ -111,6 +121,11 @@
         <tbody>
         </tbody>
       </table>
+    </div>
+
+    <div id="progress-container">
+      <div>Transferring data to Google Sheets...</div>
+      <div id="progress-bar"></div>
     </div>
 
     <script>
@@ -225,8 +240,12 @@
       async function sendSavedData() {
         let savedData = JSON.parse(localStorage.getItem('unsentData')) || [];
         if (savedData.length > 0) {
-          alert("Transferring data to Google Sheets...");
-          
+          const progressContainer = document.getElementById('progress-container');
+          const progressBar = document.getElementById('progress-bar');
+
+          progressContainer.style.display = 'block';
+          progressBar.style.width = '0';
+
           const API_URL = "https://script.google.com/macros/s/AKfycbyJY-UyP6kLGk68mLWYKivvR3yaUhLcUfWha1zdtUWIc5sK8247LLC848vFLTAiUJU1uA/exec";
 
           for (let i = 0; i < savedData.length; i++) {
@@ -244,6 +263,9 @@
                 localStorage.setItem('unsentData', JSON.stringify(savedData));
                 removeTableRow(i);
                 i--;
+
+                // Update progress bar
+                progressBar.style.width = `${((savedData.length - i) / savedData.length) * 100}%`;
               } else {
                 console.error('Error:', response.statusText);
               }
@@ -252,7 +274,9 @@
               break;
             }
           }
-          
+
+          progressContainer.style.display = 'none';
+
           if (savedData.length === 0) {
             alert("All data has been successfully transferred.すべてのデータが正常に転送されました");
           }
