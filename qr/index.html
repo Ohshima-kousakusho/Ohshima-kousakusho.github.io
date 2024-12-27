@@ -256,6 +256,10 @@
         }
 
         startScan();
+        
+document.getElementById('code').addEventListener('input', function () {
+    this.value = this.value.toUpperCase();
+});
 
         document.addEventListener('DOMContentLoaded', function () {
             const inputs = document.querySelectorAll('input');
